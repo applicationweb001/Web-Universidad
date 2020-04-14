@@ -39,15 +39,6 @@
                           label="Nombre"
                         ></v-text-field>
                       </v-flex>
-                      <v-flex xs12 sm12 md12>
-                        <v-textarea
-                          clearable
-                          clear-icon="cancel"
-                          label="Descripcion"
-                          v-model="descripcion"
-                        ></v-textarea>
-                      </v-flex>
-
                       <v-flex xs12 sm12 md12 v-show="valida">
                         <div
                           class="red--text"
@@ -173,8 +164,8 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1
-        ? "Nueva Categoría"
-        : "Actualizando Categoría";
+        ? "Nueva Carrera"
+        : "Actualizando Carrera";
     }
   },
 
