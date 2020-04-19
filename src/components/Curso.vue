@@ -3,14 +3,14 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="carreras"
+        :items="cursos"
         :search="search"
         sort-by="calories"
         class="elevation-1"
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Carreras</v-toolbar-title>
+            <v-toolbar-title>CursosChristian</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
@@ -32,22 +32,23 @@
                 </v-card-title>
                 <v-card-text>
                   <v-container>
-                    <v-layout wrap>
-                      <v-flex xs12 sm12 md12>
+                    <v-row>
+                      <v-col cols="12" sm="8" md="8">
                         <v-text-field
                           v-model="nombre"
                           label="Nombre"
                         ></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm12 md12 v-show="valida">
-                        <div
-                          class="red--text"
-                          v-for="v in validaMensaje"
-                          :key="v"
-                          v-text="v"
-                        ></div>
-                      </v-flex>
-                    </v-layout>
+                      </v-col>
+
+                      <v-col cols="12" sm="4" md="4">
+                        <v-autocomplete
+                          v-model="s"
+                          :items="s"
+                          label="Rol"
+                        ></v-autocomplete>
+                      </v-col>
+                    </v-row>
+                     
                   </v-container>
                 </v-card-text>
 
@@ -140,6 +141,7 @@
 </template>
 <script>
 import axios from "axios";
+
 export default {
   data: () => ({
     carreras: [],
@@ -239,10 +241,10 @@ export default {
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
       axios
-        .get("api/Carreras/Listar")
+        .get("api/Categorias/Listar")
         .then(function(response) {
           //console.log(response);
-          me.carreras = response.data;
+          me.categorias = response.data;
         })
         .catch(function(error) {
           console.log(error);
@@ -283,7 +285,7 @@ export default {
       //let configuracion ={headers : header};
         axios
           .put("api/Carrera/Actualizar", {
-            idcarrera: me.id,
+            idcategoria: me.id,
             nombre: me.nombre,
           })
           .then(function(response) {
@@ -300,7 +302,8 @@ export default {
       //let configuracion ={headers : header};
         axios
           .post("api/Carrera/Crear", {
-            nombre: me.nombre
+            nombre: me.nombre,
+            descripcion: me.descripcion
           })
           .then(function(response) {
             me.close();
