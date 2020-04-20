@@ -155,6 +155,7 @@ export default {
     nombre: "",
     valida: 0,
     validaMensaje: [],
+    
     adModal: 0,
     adAccion: 0,
     adNombre: 0,
@@ -188,7 +189,7 @@ export default {
     statusItem(accion, item) {
       this.adModal = 1;
       this.adNombre = item.nombre;
-      this.adId = item.idcategoria;
+      this.adId = item.idcarrera;
 
       if (accion == 1) {
         this.adAccion = 1;
@@ -201,10 +202,10 @@ export default {
 
     activar() {
       let me = this;
-      let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      let configuracion ={headers : header};
+      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
+      //let configuracion ={headers : header};
       axios
-        .put("api/Categorias/Activar/" + this.adId, {},configuracion)
+        .put("api/Carreras/Activar/" + this.adId , {})
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -218,10 +219,10 @@ export default {
     },
     desactivar() {
       let me = this;
-      let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      let configuracion ={headers : header};
+      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
+      //let configuracion ={headers : header};
       axios
-        .put("api/Categorias/Desactivar/" + this.adId,{},configuracion)
+        .put("api/Carreras/Desactivar/" + this.adId,{})
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -250,9 +251,8 @@ export default {
     },
 
     editItem(item) {
-      this.id = item.idcategoria;
+      this.id = item.idcarrera;
       this.nombre = item.nombre;
-      this.descripcion = item.descripcion;
       this.editedIndex = 1;
       this.dialog = true;
     },
@@ -267,7 +267,6 @@ export default {
     clean() {
       this.id = "";
       this.nombre = "";
-      this.descripcion = "";
       this.editedIndex = -1;
     },
 
@@ -280,9 +279,9 @@ export default {
         //Código para editar
         let me = this;
         //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
+        //let configuracion ={headers : header};
         axios
-          .put("api/Carrera/Actualizar", {
+          .put("api/Carreras/Actualizar", {
             idcarrera: me.id,
             nombre: me.nombre,
           })
@@ -299,7 +298,7 @@ export default {
         //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
         axios
-          .post("api/Carrera/Crear", {
+          .post("api/Carreras/Crear", {
             nombre: me.nombre
           })
           .then(function(response) {

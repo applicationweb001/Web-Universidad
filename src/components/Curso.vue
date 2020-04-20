@@ -144,11 +144,12 @@ import axios from "axios";
 
 export default {
   data: () => ({
-    carreras: [],
+    cursos: [],
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
-      { text: "Carrera", value: "nombre", sortable: true },
+      { text: "Curso", value: "nombre", sortable: true },
+      { text: "Carreras", value: "carreras", sortable: true },
       { text: "Estado", value: "condicion", sortable: false } //el name es lo que tiene que ir igual al archivo JSON
     ],
     search: "",
@@ -241,10 +242,10 @@ export default {
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
       axios
-        .get("api/Categorias/Listar")
+        .get("api/Cursos/Listar")
         .then(function(response) {
           //console.log(response);
-          me.categorias = response.data;
+          me.cursos = response.data;
         })
         .catch(function(error) {
           console.log(error);
