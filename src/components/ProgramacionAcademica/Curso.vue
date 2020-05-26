@@ -10,7 +10,7 @@
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>CursosChristian</v-toolbar-title>
+            <v-toolbar-title>Cursos</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
@@ -33,20 +33,21 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="8" md="8">
+                      <v-col cols="12" sm="12" md="12">
                         <v-text-field
                           v-model="nombre"
                           label="Nombre"
                         ></v-text-field>
                       </v-col>
 
-                      <v-col cols="12" sm="4" md="4">
+                      <v-col cols="12" sm="8" md="8">
                         <v-autocomplete
                           v-model="s"
                           :items="s"
-                          label="Rol"
+                          label="Carreras"
                         ></v-autocomplete>
                       </v-col>
+
                     </v-row>
                      
                   </v-container>
@@ -67,10 +68,10 @@
             <v-dialog v-model="adModal" max-width="300">
               <v-card>
                 <v-card-title class="headline" v-if="adAccion == 1"
-                  >¿Activar Item?</v-card-title
+                  >¿Eliminar Item?</v-card-title
                 >
                 <v-card-title class="headline" v-if="adAccion == 2"
-                  >¿Desactivar Item?</v-card-title
+                  >¿Eliminar Item?</v-card-title
                 >
                 <v-card-text>
                   Estás a punto de
@@ -87,7 +88,7 @@
                     color="orange darken-4"
                     flat="flat"
                     @click="activar()"
-                    >Activar</v-btn
+                    >¿Eliminar</v-btn
                   >
                   
                   <v-btn
@@ -95,7 +96,7 @@
                     color="orange darken-4"
                     flat="flat"
                     @click="desactivar()"
-                    >Desactivar</v-btn
+                    >¿Eliminar</v-btn
                   >
                  
                 </v-card-actions>
@@ -111,12 +112,12 @@
 
           <template v-if="item.condicion">
             <v-icon small @click="statusItem(2, item)">
-              block
+              delete
             </v-icon>
           </template>
           <template v-else>
             <v-icon small @click="statusItem(1, item)">
-              check
+              delete
             </v-icon>
           </template>
         </template>

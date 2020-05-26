@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Carrera from '../components/Carrera.vue'
-import Curso from '../components/Curso.vue'
+import Carrera from '../components/ProgramacionAcademica/Carrera.vue'
+import Curso from '../components/ProgramacionAcademica/Curso.vue'
 
 Vue.use(VueRouter)
 

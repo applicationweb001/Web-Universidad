@@ -23,7 +23,7 @@
             ></v-text-field>
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{on}">
+              <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo</v-btn>
               </template>
               <v-card>
@@ -53,17 +53,17 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click.native="close"
+                  <v-btn  outlined color="primary2" @click.native="close"
                     >Cancelar</v-btn
                   >
-                  <v-btn color="blue darken-1" text @click.native="guardar"
+                  <v-btn  color="primary" dark  @click.native="guardar"
                     >Guardar</v-btn
                   >
                 </v-card-actions>
               </v-card>
             </v-dialog>
 
-            <v-dialog v-model="adModal" max-width="300">
+            <!-- <v-dialog v-model="adModal" max-width="300">
               <v-card>
                 <v-card-title class="headline" v-if="adAccion == 1"
                   >¿Activar Item?</v-card-title
@@ -99,16 +99,60 @@
                  
                 </v-card-actions>
               </v-card>
+            </v-dialog> -->
+
+            <v-dialog v-model="dropModal" max-width="400">
+              <v-card>
+                <v-card-title class="headline"
+                  >¿Desea eliminar la Carrera?</v-card-title
+                >
+                <v-card-text>
+                  Estás a punto de
+                  <span v-if="adAccion == 2">Eliminar</span>
+                  el item de {{ dropName }}
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" @click="closeDropModal()"
+                    >Cancelar</v-btn
+                  >
+
+                  <v-btn color="orange darken-4" @click="drop()"
+                    >Eliminar</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
             </v-dialog>
           </v-toolbar>
+
+
+          <v-snackbar
+          v-model="snackbar"
+          :bottom="true"
+          :color="colorSnack"
+          :right="true"
+          :timeout="5000"
+        >
+          {{ textSnack }}
+
+          <v-btn dark text @click="snackbar = false">
+            Close
+          </v-btn>
+        </v-snackbar>
+
+
         </template>
 
         <template v-slot:item.opcion="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
+          <v-icon small color ="indigo" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
 
-          <template v-if="item.condicion">
+          <v-icon small color="red" class="mr-2" @click="dropItem(item)">
+            delete
+          </v-icon>
+
+          <!-- <template v-if="item.condicion">
             <v-icon small @click="statusItem(2, item)">
               block
             </v-icon>
@@ -118,19 +162,20 @@
               check
             </v-icon>
           </template>
+           -->
         </template>
 
-        <template v-slot:item.condicion="{ item }">
+        <!--   <template v-slot:item.condicion="{ item }">
           <td>
             <div v-if="item.condicion">
               <span class="blue--text">Activo</span>
             </div>
             <div v-else>
-              <span class="red--text">Inactivo</span>
+              <span class="red--text">Inactivo</span> 
             </div>
           </td>
-        </template>
-
+        </template> -->
+        
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">Resetear</v-btn>
         </template>
@@ -147,7 +192,6 @@ export default {
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
       { text: "Carrera", value: "nombre", sortable: true },
-      { text: "Estado", value: "condicion", sortable: false } //el name es lo que tiene que ir igual al archivo JSON
     ],
     search: "",
     editedIndex: -1,
@@ -155,25 +199,33 @@ export default {
     nombre: "",
     valida: 0,
     validaMensaje: [],
-    
-    adModal: 0,
+
+    adModal: false,
     adAccion: 0,
-    adNombre: 0,
-    adId: 0
+    adNombre: "",
+    adId: 0,
+
+    dropModal: false,
+    dropId: 0,
+    dropName: "",
+
+    //ControlSnack
+    snackbar: false,
+    textSnack: "",
+    colorSnack: "",
+    //
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1
-        ? "Nueva Carrera"
-        : "Actualizando Carrera";
-    }
+      return this.editedIndex === -1 ? "Nueva Carrera" : "Actualizando Carrera";
+    },
   },
 
   watch: {
     dialog(val) {
       val || this.close();
-    }
+    },
   },
 
   created() {
@@ -181,9 +233,30 @@ export default {
   },
 
   methods: {
+    close() {
+      this.dialog = false;
+      this.clean();
+    },
 
-    statusCerrar(){
-      this.adModal = 0;
+    clean() {
+      this.id = "";
+      this.nombre = "";
+      this.editedIndex = -1;
+      this.colorsnack = "";
+    },
+
+    openSnack(text, color) {
+      this.textSnack = text;
+      this.colorSnack = color;
+      this.snackbar = true;
+    },
+
+    closeAdModal() {
+      this.adModal = false;
+    },
+
+    closeDropModal() {
+      this.dropModal = false;
     },
 
     statusItem(accion, item) {
@@ -199,13 +272,12 @@ export default {
         this.adModal = 0;
       }
     },
-
     activar() {
       let me = this;
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
       axios
-        .put("api/Carreras/Activar/" + this.adId , {})
+        .put("api/Carreras/Activar/" + this.adId)
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -222,7 +294,7 @@ export default {
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
       axios
-        .put("api/Carreras/Desactivar/" + this.adId,{})
+        .put("api/Carreras/Desactivar/" + this.adId, {})
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -240,9 +312,8 @@ export default {
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
       axios
-        .get("api/Carreras/Listar")
-        .then(function(response) {
-          //console.log(response);
+        .get("api/Carreras")
+        .then((response) => {
           me.carreras = response.data;
         })
         .catch(function(error) {
@@ -257,17 +328,25 @@ export default {
       this.dialog = true;
     },
 
-    deleteItem(item) {},
-
-    close() {
-      this.dialog = false;
-      this.clean();
+    dropItem(item) {
+      this.dropModal = true;
+      this.dropId = item.idcarrera;
+      this.dropName = item.nombre;
     },
 
-    clean() {
-      this.id = "";
-      this.nombre = "";
-      this.editedIndex = -1;
+    drop() {
+      let me = this;
+
+      axios
+        .delete("api/Carreras/" + me.dropId)
+        .then(function(response) {
+          me.openSnack("Registro "+ me.dropName +" eliminado con éxito", "red");
+          me.closeDropModal();
+          me.listar();
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
 
     guardar() {
@@ -281,11 +360,12 @@ export default {
         //let header = {"Authorization" : "Bearer "+this.$store.state.token };
         //let configuracion ={headers : header};
         axios
-          .put("api/Carreras/Actualizar", {
+          .put("api/Carreras", {
             idcarrera: me.id,
             nombre: me.nombre,
           })
           .then(function(response) {
+            me.openSnack("Registro " + me.nombre + " actualizado con éxito","indigo");
             me.close();
             me.listar();
           })
@@ -296,12 +376,13 @@ export default {
         //Código para guardar
         let me = this;
         //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
+        //let configuracion ={headers : header};
         axios
-          .post("api/Carreras/Crear", {
-            nombre: me.nombre
+          .post("api/Carreras", {
+            nombre: me.nombre,
           })
           .then(function(response) {
+            me.openSnack("Registro " + me.nombre + " creado con éxito", "green");
             me.close();
             me.listar();
           })
@@ -315,17 +396,16 @@ export default {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.nombre.length < 3 || this.nombre.length > 50) {
+      if (this.nombre.length < 10 || this.nombre.length > 100) {
         this.validaMensaje.push(
-          "El nombre debe tener más de 3 caracteres y menos de 50 caracteres"
+          "El nombre debe tener más de 10 caracteres y menos de 100 caracteres"
         );
       }
       if (this.validaMensaje.length) {
         this.valida = 1;
       }
       return this.valida;
-    }
-  }
+    },
+  },
 };
 </script>
-
