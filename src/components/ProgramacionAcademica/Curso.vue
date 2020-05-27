@@ -22,8 +22,8 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
-              <template v-slot:activator="{on}">
+            <v-dialog v-model="dialog" max-width="600px">
+              <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo</v-btn>
               </template>
               <v-card>
@@ -39,33 +39,60 @@
                           label="Nombre"
                         ></v-text-field>
                       </v-col>
-
-                      <v-col cols="12" sm="8" md="8">
-                        <v-autocomplete
-                          v-model="s"
-                          :items="s"
-                          label="Carreras"
-                        ></v-autocomplete>
-                      </v-col>
-
                     </v-row>
-                     
+                    <v-row>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-autocomplete
+                          v-model="selectsCarreras"
+                          :items="carreras"
+                          filled
+                          chips
+                          label="Carreras"
+                          multiple
+                          item-text="nombre"
+                          item-value="idcarrera"
+                        >
+                          <template v-slot:selection="data">
+                            <v-chip
+                              v-bind="data.attrs"
+                              :input-value="data.selected"
+                              close
+                              @click="data.select"
+                              @click:close="remove(data.item)"
+                            >
+                              {{ data.item.nombre }}
+                            </v-chip>
+                          </template>
+                        </v-autocomplete>
+                      </v-col>
+                    </v-row>
+
+                    <v-row>
+                      <v-col cols="12" sm="12" md="12">
+                        <div
+                          class="red--text"
+                          v-for="v in validaMensaje"
+                          :key="v"
+                          v-text="v"
+                        ></div>
+                      </v-col>
+                    </v-row>
                   </v-container>
                 </v-card-text>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click.native="close"
+                  <v-btn outlined color="primary2" @click.native="close"
                     >Cancelar</v-btn
                   >
-                  <v-btn color="blue darken-1" text @click.native="guardar"
+                  <v-btn color="primary" dark @click.native="guardar"
                     >Guardar</v-btn
                   >
                 </v-card-actions>
               </v-card>
             </v-dialog>
 
-            <v-dialog v-model="adModal" max-width="300">
+            <!-- <v-dialog v-model="adModal" max-width="300">
               <v-card>
                 <v-card-title class="headline" v-if="adAccion == 1"
                   >¿Eliminar Item?</v-card-title
@@ -101,27 +128,55 @@
                  
                 </v-card-actions>
               </v-card>
+            </v-dialog>-->
+            <v-dialog v-model="dropModal" max-width="400">
+              <v-card>
+                <v-card-title class="headline"
+                  >¿Desea eliminar el Curso?</v-card-title
+                >
+                <v-card-text>
+                  Estás a punto de eliminar el ítem: {{ dropName }}
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="green darken-1" @click="closeDropModal()"
+                    >Cancelar</v-btn
+                  >
+
+                  <v-btn color="orange darken-4" @click="drop()"
+                    >Eliminar</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
             </v-dialog>
           </v-toolbar>
+
+          <v-snackbar
+            v-model="snackbar"
+            :bottom="true"
+            :color="colorSnack"
+            :right="true"
+            :timeout="5000"
+          >
+            {{ textSnack }}
+
+            <v-btn dark text @click="snackbar = false">
+              Close
+            </v-btn>
+          </v-snackbar>
         </template>
 
         <template v-slot:item.opcion="{ item }">
-          <v-icon small class="mr-2" @click="editItem(item)">
+          <v-icon small color="blue" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
 
-          <template v-if="item.condicion">
-            <v-icon small @click="statusItem(2, item)">
-              delete
-            </v-icon>
-          </template>
-          <template v-else>
-            <v-icon small @click="statusItem(1, item)">
-              delete
-            </v-icon>
-          </template>
+          <v-icon small color="red" class="mr-2" @click="dropItem(item)">
+            delete
+          </v-icon>
         </template>
 
+        <!-- 
         <template v-slot:item.condicion="{ item }">
           <td>
             <div v-if="item.condicion">
@@ -132,7 +187,7 @@
             </div>
           </td>
         </template>
-
+ -->
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">Resetear</v-btn>
         </template>
@@ -146,47 +201,77 @@ import axios from "axios";
 export default {
   data: () => ({
     cursos: [],
+    carreras: [],
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
       { text: "Curso", value: "nombre", sortable: true },
-      { text: "Carreras", value: "carreras", sortable: true },
-      { text: "Estado", value: "condicion", sortable: false } //el name es lo que tiene que ir igual al archivo JSON
+      { text: "Carreras", value: "carreras", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
     ],
     search: "",
     editedIndex: -1,
+
+    //objeto
     id: "",
     nombre: "",
+    selectsCarreras: [],
+    //
+
     valida: 0,
     validaMensaje: [],
+
     adModal: 0,
     adAccion: 0,
     adNombre: 0,
-    adId: 0
+    adId: 0,
+
+    //Drop
+    dropModal: false,
+    dropId: 0,
+    dropName: "",
+
+    //ControlSnack
+    snackbar: false,
+    textSnack: "",
+    colorSnack: "",
+    //
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1
-        ? "Nueva Carrera"
-        : "Actualizando Carrera";
-    }
+      return this.editedIndex === -1 ? "Nuevo Curso" : "Actualizando Curso";
+    },
   },
 
   watch: {
     dialog(val) {
       val || this.close();
-    }
+    },
   },
 
   created() {
     this.listar();
+    this.ListCarreras();
   },
 
   methods: {
+    remove(item) {
+      let index = this.selectsCarreras.indexOf(item.idcarrera);
+      if (index >= 0) this.selectsCarreras.splice(index, 1);
+    },
 
-    statusCerrar(){
+    statusCerrar() {
       this.adModal = 0;
+    },
+
+    openSnack(text, color) {
+      this.textSnack = text;
+      this.colorSnack = color;
+      this.snackbar = true;
+    },
+
+    closeDropModal() {
+      this.dropModal = false;
     },
 
     statusItem(accion, item) {
@@ -202,13 +287,12 @@ export default {
         this.adModal = 0;
       }
     },
-
     activar() {
       let me = this;
-      let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      let configuracion ={headers : header};
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .put("api/Categorias/Activar/" + this.adId, {},configuracion)
+        .put("api/Categorias/Activar/" + this.adId, {}, configuracion)
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -222,10 +306,10 @@ export default {
     },
     desactivar() {
       let me = this;
-      let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      let configuracion ={headers : header};
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .put("api/Categorias/Desactivar/" + this.adId,{},configuracion)
+        .put("api/Categorias/Desactivar/" + this.adId, {}, configuracion)
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -240,12 +324,9 @@ export default {
 
     listar() {
       let me = this;
-      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
       axios
-        .get("api/Cursos/Listar")
+        .get("api/Cursos")
         .then(function(response) {
-          //console.log(response);
           me.cursos = response.data;
         })
         .catch(function(error) {
@@ -253,26 +334,87 @@ export default {
         });
     },
 
-    editItem(item) {
-      this.id = item.idcategoria;
-      this.nombre = item.nombre;
-      this.descripcion = item.descripcion;
-      this.editedIndex = 1;
-      this.dialog = true;
+    ListCarreras() {
+      let me = this;
+      let carrerasArray = [];
+
+      axios
+        .get("api/Carreras/select")
+        .then(function(response) {
+          //console.log(response);
+          carrerasArray = response.data;
+          carrerasArray.map(function(x) {
+            me.carreras.push({ nombre: x.nombre, idcarrera: x.idcarrera });
+          });
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
     },
 
-    deleteItem(item) {},
+    selectCarreras(_dialog, id) {
+      let me = this;
+      let carrerasArray = [];
+
+      axios
+        .get("api/Cursos/Carreras/" + id)
+        .then(function(response) {
+          carrerasArray = response.data;
+          carrerasArray.map(function(x) {
+            me.selectsCarreras.push(x.idcarrera);
+          });
+          _dialog();
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+
+    editItem(item) {
+      this.id = item.idcurso;
+      this.selectsCarreras = [];
+      this.nombre = item.nombre;
+      this.editedIndex = 1;
+      this.selectCarreras(() => {
+        this.dialog = true;
+      }, this.id);
+    },
+
+    dropItem(item) {
+      this.dropId = item.idcurso;
+      this.dropName = item.nombre;
+      this.dropModal = true;
+    },
+    drop() {
+      let me = this;
+
+      axios
+        .delete("api/Cursos/" + me.dropId)
+        .then(function(response) {
+          me.openSnack(
+            "Registro " + me.dropName + " eliminado con éxito",
+            "red"
+          );
+          me.closeDropModal();
+          me.listar();
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
 
     close() {
       this.dialog = false;
       this.clean();
     },
 
+    //limpiar principalmente los atributos del objeto
     clean() {
       this.id = "";
       this.nombre = "";
-      this.descripcion = "";
+      this.selectsCarreras = [];
       this.editedIndex = -1;
+      this.validaMensaje = [];
     },
 
     guardar() {
@@ -283,14 +425,18 @@ export default {
       if (this.editedIndex > -1) {
         //Código para editar
         let me = this;
-        //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
+
         axios
-          .put("api/Carrera/Actualizar", {
-            idcategoria: me.id,
+          .put("api/Cursos", {
+            idcurso: me.id,
             nombre: me.nombre,
+            carreras: me.selectsCarreras,
           })
           .then(function(response) {
+            me.openSnack(
+              "Registro " + me.nombre + " actualizado con éxito",
+              "indigo"
+            );
             me.close();
             me.listar();
           })
@@ -300,14 +446,17 @@ export default {
       } else {
         //Código para guardar
         let me = this;
-        //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
+
         axios
-          .post("api/Carrera/Crear", {
+          .post("api/Cursos", {
             nombre: me.nombre,
-            descripcion: me.descripcion
+            carreras: me.selectsCarreras,
           })
           .then(function(response) {
+            me.openSnack(
+              "Registro " + me.nombre + " creado con éxito",
+              "green"
+            );
             me.close();
             me.listar();
           })
@@ -321,17 +470,21 @@ export default {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.nombre.length < 3 || this.nombre.length > 50) {
+      if (this.nombre.length < 10 || this.nombre.length > 100) {
         this.validaMensaje.push(
-          "El nombre debe tener más de 3 caracteres y menos de 50 caracteres"
+          "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
         );
       }
+
+      if (this.selectsCarreras.length === 0) {
+        this.validaMensaje.push("-Debe seleccionar uno o más cursos");
+      }
+
       if (this.validaMensaje.length) {
         this.valida = 1;
       }
       return this.valida;
-    }
-  }
+    },
+  },
 };
 </script>
-

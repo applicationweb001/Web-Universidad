@@ -53,10 +53,10 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn  outlined color="primary2" @click.native="close"
+                  <v-btn outlined color="primary2" @click.native="close"
                     >Cancelar</v-btn
                   >
-                  <v-btn  color="primary" dark  @click.native="guardar"
+                  <v-btn color="primary" dark @click.native="guardar"
                     >Guardar</v-btn
                   >
                 </v-card-actions>
@@ -107,9 +107,7 @@
                   >¿Desea eliminar la Carrera?</v-card-title
                 >
                 <v-card-text>
-                  Estás a punto de
-                  <span v-if="adAccion == 2">Eliminar</span>
-                  el item de {{ dropName }}
+                  Estás a punto de eliminar el ítem: {{ dropName }}
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -125,26 +123,23 @@
             </v-dialog>
           </v-toolbar>
 
-
           <v-snackbar
-          v-model="snackbar"
-          :bottom="true"
-          :color="colorSnack"
-          :right="true"
-          :timeout="5000"
-        >
-          {{ textSnack }}
+            v-model="snackbar"
+            :bottom="true"
+            :color="colorSnack"
+            :right="true"
+            :timeout="5000"
+          >
+            {{ textSnack }}
 
-          <v-btn dark text @click="snackbar = false">
-            Close
-          </v-btn>
-        </v-snackbar>
-
-
+            <v-btn dark text @click="snackbar = false">
+              Close
+            </v-btn>
+          </v-snackbar>
         </template>
 
         <template v-slot:item.opcion="{ item }">
-          <v-icon small color ="indigo" class="mr-2" @click="editItem(item)">
+          <v-icon small color="blue" class="mr-2" @click="editItem(item)">
             edit
           </v-icon>
 
@@ -175,7 +170,7 @@
             </div>
           </td>
         </template> -->
-        
+
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">Resetear</v-btn>
         </template>
@@ -243,6 +238,7 @@ export default {
       this.nombre = "";
       this.editedIndex = -1;
       this.colorsnack = "";
+      this.validaMensaje = [];
     },
 
     openSnack(text, color) {
@@ -251,12 +247,12 @@ export default {
       this.snackbar = true;
     },
 
-    closeAdModal() {
-      this.adModal = false;
-    },
-
     closeDropModal() {
       this.dropModal = false;
+    },
+
+    closeAdModal() {
+      this.adModal = false;
     },
 
     statusItem(accion, item) {
@@ -340,7 +336,10 @@ export default {
       axios
         .delete("api/Carreras/" + me.dropId)
         .then(function(response) {
-          me.openSnack("Registro "+ me.dropName +" eliminado con éxito", "red");
+          me.openSnack(
+            "Registro " + me.dropName + " eliminado con éxito",
+            "red"
+          );
           me.closeDropModal();
           me.listar();
         })
@@ -365,7 +364,10 @@ export default {
             nombre: me.nombre,
           })
           .then(function(response) {
-            me.openSnack("Registro " + me.nombre + " actualizado con éxito","indigo");
+            me.openSnack(
+              "Registro " + me.nombre + " actualizado con éxito",
+              "indigo"
+            );
             me.close();
             me.listar();
           })
@@ -382,7 +384,10 @@ export default {
             nombre: me.nombre,
           })
           .then(function(response) {
-            me.openSnack("Registro " + me.nombre + " creado con éxito", "green");
+            me.openSnack(
+              "Registro " + me.nombre + " creado con éxito",
+              "green"
+            );
             me.close();
             me.listar();
           })

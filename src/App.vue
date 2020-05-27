@@ -38,7 +38,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item router :to="{ name: 'curso' }" >
+            <v-list-item router :to="{ name: '' }" >
               <v-list-item-action>
                 <v-icon>book</v-icon>
               </v-list-item-action>
