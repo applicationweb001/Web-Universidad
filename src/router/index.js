@@ -3,6 +3,9 @@ import VueRouter from 'vue-router'
 import Carrera from '../components/ProgramacionAcademica/Carrera.vue'
 import Curso from '../components/ProgramacionAcademica/Curso.vue'
 import Curso1 from '../components/AdministracionAcademica/Carrera.vue'
+import Login from '../components/Seguridad/Login.vue'
+import store from '../store/index.js';
+
 
 Vue.use(VueRouter)
 
@@ -22,6 +25,11 @@ Vue.use(VueRouter)
       name: 'curso1', //este nombre es el que se usa en el html
       component: Curso1,
     },
+    {
+      path: '/login',
+      name: 'login',
+      component: Login,
+    }
     
 ]
 
@@ -31,4 +39,13 @@ const router = new VueRouter({
   routes
 })
 
+router.beforeEach((to, from, next) => {
+  
+  if (!store.state.usuario && to.path !== '/login') {
+    next('/login');
+  } 
+  else {
+    next();
+  }
+});
 export default router

@@ -2,6 +2,7 @@
   <div id="app">
     <v-app id="inspire">
       <v-navigation-drawer
+        v-if="logueado"
         v-model="drawer"
         :clipped="$vuetify.breakpoint.lgAndUp"
         color="secondary"
@@ -129,7 +130,7 @@
                 <v-list-item-title>Consultas</v-list-item-title>
               </v-list-item-content>
             </template>
-            <v-list-item router :to="{ name: '' }" >
+            <v-list-item router :to="{ name: 'login' }" >
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
@@ -160,7 +161,12 @@
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>System Uni</v-toolbar-title>
+        <v-spacer/>
+      <v-btn v-if="logueado" icon @click="salir">
+        <v-icon>logout</v-icon> 
+      </v-btn>
       </v-app-bar>
+
 
       <v-content>
         <v-container fluid fill-height>
@@ -183,6 +189,19 @@ export default {
     return {
       drawer: null
     };
+  },
+  computed: {
+    logueado(){
+      return this.$store.state.usuario;
+    }
+  },
+  created(){
+    this.$store.dispatch("autoLogin");
+  },
+  methods:{
+    salir(){
+      this.$store.dispatch("salir");
+    }
   }
 };
 </script>
