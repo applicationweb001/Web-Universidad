@@ -1,42 +1,42 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import router from '../router/index'
-import decode from 'jwt-decode'
+import Vue from "vue";
+import Vuex from "vuex";
+import router from "../router/index";
+import decode from "jwt-decode";
 
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
     token: null,
-    usuario: null
+    usuario: null,
   },
   mutations: {
-    setToken(state,token){
-      state.token=token
+    setToken(state, token) {
+      state.token = token;
     },
-    setUsuario (state,usuario){
-      state.usuario=usuario
-    }
+    setUsuario(state, usuario) {
+      state.usuario = usuario;
+    },
   },
   actions: {
-    guardarToken({commit},token){
-      commit("setToken", token)
-      commit("setUsuario", decode(token))
-      localStorage.setItem("token", token)
+    guardarToken({ commit }, token) {
+      commit("setToken", token);
+      commit("setUsuario", decode(token));
+      localStorage.setItem("token", token);
     },
-    autoLogin({commit}){
-      let token = localStorage.getItem("token")
-      if (token){
-        commit("setToken", token)
-        commit("setUsuario", decode(token))
+    autoLogin({ commit }) {
+      let token = localStorage.getItem("token");
+      if (token) {
+        commit("setToken", token);
+        commit("setUsuario", decode(token));
       }
-      router.push({name: 'curso'})
+      router.push({ name: "curso" });
     },
-    salir({commit}){
-      commit("setToken", null)
-      commit("setUsuario", null)
-      localStorage.removeItem("token")
-      router.push({name: 'login'})
-    }
-  }
-})
+    salir({ commit }) {
+      commit("setToken", null);
+      commit("setUsuario", null);
+      localStorage.removeItem("token");
+      router.push({ name: "login" });
+    },
+  },
+});

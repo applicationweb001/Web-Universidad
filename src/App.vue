@@ -17,7 +17,7 @@
               </v-list-item-content>
             </template>
 
-            <v-list-item router :to="{ name: 'carrera' }" >
+            <v-list-item router :to="{ name: 'carrera' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
@@ -28,30 +28,30 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item router :to="{ name: 'curso' }" >
+            <v-list-item router :to="{ name: 'curso' }">
               <v-list-item-action>
                 <v-icon>book</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
                   Cursos
-                   </v-list-item-title>
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item router :to="{ name: 'curso1' }" >
+            <v-list-item router :to="{ name: 'curso1' }">
               <v-list-item-action>
                 <v-icon>book</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
                   Secciones
-                   </v-list-item-title>
+                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list-group>
 
-  <v-list-group prepend-icon="import_contacts" no-action color="indigo">
+          <v-list-group prepend-icon="import_contacts" no-action color="indigo">
             <template v-slot:activator>
               <v-list-item-content>
                 <v-list-item-title>Administración</v-list-item-title>
@@ -59,7 +59,7 @@
               </v-list-item-content>
             </template>
 
-            <v-list-item router :to="{ name: '' }" >
+            <v-list-item router :to="{ name: '' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
@@ -70,7 +70,7 @@
               </v-list-item-content>
             </v-list-item>
 
- <v-list-item router :to="{ name: '' }" >
+            <v-list-item router :to="{ name: '' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
@@ -81,27 +81,26 @@
               </v-list-item-content>
             </v-list-item>
 
- <v-list-item router :to="{ name: '' }" >
+            <v-list-item router :to="{ name: 'matricula' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                    Matrícula
+                  Matrícula
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-
           </v-list-group>
 
-  <v-list-group prepend-icon="import_contacts" no-action color="indigo">
+          <v-list-group prepend-icon="import_contacts" no-action color="indigo">
             <template v-slot:activator>
               <v-list-item-content>
                 <v-list-item-title>Seguridad</v-list-item-title>
               </v-list-item-content>
             </template>
 
-            <v-list-item router :to="{ name: 'carrera' }" >
+            <v-list-item router :to="{ name: 'carrera' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
@@ -112,25 +111,25 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item router :to="{ name: '' }" >
+            <v-list-item router :to="{ name: '' }">
               <v-list-item-action>
                 <v-icon>book</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Roles 
-                  </v-list-item-title>
-                  </v-list-item-content>
+                  Roles
+                </v-list-item-title>
+              </v-list-item-content>
             </v-list-item>
           </v-list-group>
 
-        <v-list-group prepend-icon="import_contacts" no-action color="indigo">
+          <v-list-group prepend-icon="import_contacts" no-action color="indigo">
             <template v-slot:activator>
               <v-list-item-content>
                 <v-list-item-title>Consultas</v-list-item-title>
               </v-list-item-content>
             </template>
-            <v-list-item router :to="{ name: 'login' }" >
+            <v-list-item router :to="{ name: 'login' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
@@ -138,18 +137,15 @@
                 <v-list-item-title>
                   Consulta de
                 </v-list-item-title>
-                  <v-list-item-title>
+                <v-list-item-title>
                   Matricula
                 </v-list-item-title>
-                  <v-list-item-title>
+                <v-list-item-title>
                   por Ciclo
                 </v-list-item-title>
-                
               </v-list-item-content>
             </v-list-item>
-      
           </v-list-group>
- 
         </v-list>
       </v-navigation-drawer>
 
@@ -161,12 +157,11 @@
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>System Uni</v-toolbar-title>
-        <v-spacer/>
-      <v-btn v-if="logueado" icon @click="salir">
-        <v-icon>logout</v-icon> 
-      </v-btn>
+        <v-spacer />
+        <v-btn v-if="logueado" icon @click="salir">
+          <v-icon>logout</v-icon>
+        </v-btn>
       </v-app-bar>
-
 
       <v-content>
         <v-container fluid fill-height>
@@ -175,7 +170,7 @@
           </v-slide-y-transition>
         </v-container>
       </v-content>
-     <!--  <v-footer color="primary2" light app>
+      <!--  <v-footer color="primary2" light app>
         <span class="white--text">&copy; 2020</span>
       </v-footer> -->
     </v-app>
@@ -187,26 +182,26 @@ export default {
 
   data() {
     return {
-      drawer: null
+      drawer: null,
     };
   },
   computed: {
-    logueado(){
+    logueado() {
       return this.$store.state.usuario;
-    }
+    },
   },
-  created(){
+  created() {
     this.$store.dispatch("autoLogin");
   },
-  methods:{
-    salir(){
+  methods: {
+    salir() {
       this.$store.dispatch("salir");
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
 .border {
-  border-left: 4px solid #3F51B5;
+  border-left: 4px solid #3f51b5;
 }
 </style>
