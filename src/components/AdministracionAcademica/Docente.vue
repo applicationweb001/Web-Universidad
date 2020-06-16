@@ -50,7 +50,7 @@
                       </v-col>
                     </v-row>
 
-                     <v-row>
+                    <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field
                           v-model="correo"
@@ -59,12 +59,9 @@
                       </v-col>
                     </v-row>
 
-                     <v-row>
+                    <v-row>
                       <v-col cols="12" sm="12" md="12">
-                        <v-text-field
-                          v-model="dni"
-                          label="DNI"
-                        ></v-text-field>
+                        <v-text-field v-model="dni" label="DNI"></v-text-field>
                       </v-col>
                     </v-row>
 
@@ -93,7 +90,6 @@
               </v-card>
             </v-dialog>
 
-          
             <v-dialog v-model="dropModal" max-width="400">
               <v-card>
                 <v-card-title class="headline"
@@ -141,7 +137,6 @@
           </v-icon>
         </template>
 
-     
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">Resetear</v-btn>
         </template>
@@ -205,12 +200,11 @@ export default {
 
   created() {
     this.listar();
-   // this.ListCarreras();
+    // this.ListCarreras();
   },
 
   methods: {
-
-   /* remove(item) {
+    /* remove(item) {
       let index = this.selectsCarreras.indexOf(item.idcarrera);
       if (index >= 0) this.selectsCarreras.splice(index, 1);
     }, */
@@ -232,7 +226,6 @@ export default {
     statusItem(accion, item) {
       this.adModal = 1;
       this.adNombre = item.nombre;
-      
 
       if (accion == 1) {
         this.adAccion = 1;
@@ -242,7 +235,6 @@ export default {
         this.adModal = 0;
       }
     },
- 
 
     listar() {
       let me = this;
@@ -255,7 +247,7 @@ export default {
           console.log(error);
         });
     },
-/*
+    /*
     ListCarreras() {
       let me = this;
       let carrerasArray = [];
@@ -274,7 +266,7 @@ export default {
         });
     },*/
 
-  /*  selectCarreras(_dialog, id) {
+    /*  selectCarreras(_dialog, id) {
       let me = this;
       let carrerasArray = [];
 
@@ -295,17 +287,16 @@ export default {
     editItem(item) {
       this.id = item.iddocente;
       this.nombre = item.nombre;
-      this.apellido=item.apellido;
-      this.correo=item.correo;
-      this.dni=item.dni;
+      this.apellido = item.apellido;
+      this.correo = item.correo;
+      this.dni = item.dni;
       this.editedIndex = 1;
-     
     },
 
     dropItem(item) {
       this.dropId = item.iddocente;
       this.dropName = item.nombre;
-      this.dropSurname =item.apellido;
+      this.dropSurname = item.apellido;
       this.dropEmail = item.correo;
       this.dropPassport = item.dni;
       this.dropModal = true;
@@ -337,9 +328,9 @@ export default {
     clean() {
       this.id = "";
       this.nombre = "";
-      this.apellido="";
-      this.correo="";
-      this.dni="";
+      this.apellido = "";
+      this.correo = "";
+      this.dni = "";
       this.editedIndex = -1;
       this.validaMensaje = [];
     },
@@ -357,9 +348,9 @@ export default {
           .put("api/Docentes", {
             iddocente: me.id,
             nombre: me.nombre,
-            apellido=me.apellido,
-            correo=me.correo,
-            dni=me.dni,
+            apellido: me.apellido,
+            correo: me.correo,
+            dni: me.dni,
           })
           .then(function(response) {
             me.openSnack(
@@ -379,9 +370,9 @@ export default {
         axios
           .post("api/Docentes", {
             nombre: me.nombre,
-            apellido=me.apellido,
-            correo=me.correo,
-            dni=me.dni,
+            apellido: me.apellido,
+            correo: me.correo,
+            dni: me.dni,
           })
           .then(function(response) {
             me.openSnack(
