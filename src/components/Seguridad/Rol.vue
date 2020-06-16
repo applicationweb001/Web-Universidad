@@ -3,14 +3,14 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="carreras"
+        :items="roles"
         :search="search"
         sort-by="calories"
         class="elevation-1"
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Carreras</v-toolbar-title>
+            <v-toolbar-title>Roles</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
@@ -114,6 +114,7 @@
                   <v-btn color="green darken-1" @click="closeDropModal()"
                     >Cancelar</v-btn
                   >
+
                   <v-btn color="orange darken-4" @click="drop()"
                     >Eliminar</v-btn
                   >
@@ -181,15 +182,14 @@
 import axios from "axios";
 export default {
   data: () => ({
-    carreras: [],
+    roles: [],
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
-      { text: "Carrera", value: "nombre", sortable: true },
+      { text: "Roles", value: "nombre", sortable: true },
     ],
     search: "",
     editedIndex: -1,
-
     id: "",
     nombre: "",
     valida: 0,
@@ -213,7 +213,7 @@ export default {
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nueva Carrera" : "Actualizando Carrera";
+      return this.editedIndex === -1 ? "Nuevo Rol" : "Actualizando Rol";
     },
   },
 
@@ -273,7 +273,7 @@ export default {
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
       axios
-        .put("api/Carreras/Activar/" + this.adId)
+        .put("api/Roles/Activar/" + this.adId)
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -290,7 +290,7 @@ export default {
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
       axios
-        .put("api/Carreras/Desactivar/" + this.adId, {})
+        .put("api/Roles/Desactivar/" + this.adId, {})
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -305,12 +305,11 @@ export default {
 
     listar() {
       let me = this;
-      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
+      
       axios
-        .get("api/Carreras")
+        .get("api/Roles")
         .then((response) => {
-          me.carreras = response.data;
+          me.roles = response.data;
         })
         .catch(function(error) {
           console.log(error);
@@ -334,7 +333,7 @@ export default {
       let me = this;
 
       axios
-        .delete("api/Carreras/" + me.dropId)
+        .delete("api/Roles/" + me.dropId)
         .then(function(response) {
           me.openSnack(
             "Registro " + me.dropName + " eliminado con éxito",
@@ -359,7 +358,7 @@ export default {
         //let header = {"Authorization" : "Bearer "+this.$store.state.token };
         //let configuracion ={headers : header};
         axios
-          .put("api/Carreras", {
+          .put("api/Roles", {
             idcarrera: me.id,
             nombre: me.nombre,
           })
@@ -380,7 +379,7 @@ export default {
         //let header = {"Authorization" : "Bearer "+this.$store.state.token };
         //let configuracion ={headers : header};
         axios
-          .post("api/Carreras", {
+          .post("api/Roles", {
             nombre: me.nombre,
           })
           .then(function(response) {

@@ -3,14 +3,14 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="carreras"
+        :items="secciones"
         :search="search"
         sort-by="calories"
         class="elevation-1"
       >
         <template v-slot:top>
           <v-toolbar flat color="white">
-            <v-toolbar-title>Carreras</v-toolbar-title>
+            <v-toolbar-title>Secciones</v-toolbar-title>
             <v-divider class="mx-4" inset vertical></v-divider>
             <v-spacer></v-spacer>
             <v-text-field
@@ -22,7 +22,7 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
+            <v-dialog v-model="dialog" max-width="600px">
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo</v-btn>
               </template>
@@ -32,22 +32,46 @@
                 </v-card-title>
                 <v-card-text>
                   <v-container>
-                    <v-layout wrap>
-                      <v-flex xs12 sm12 md12>
+                    <v-row>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-select
+                          v-model="idcurso"
+                          : items = "cursos"
+                          label="Curso"                        
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-select
+                          v-model="iddocente"
+                          : items = "docentes"
+                          label="Docente"                        
+                        ></v-select>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" sm="12" md="12">
                         <v-text-field
-                          v-model="nombre"
-                          label="Nombre"
+                          v-model="cantidad"
+                          label="Cantidad"                        
                         ></v-text-field>
-                      </v-flex>
-                      <v-flex xs12 sm12 md12 v-show="valida">
+                      </v-col>                      
+                    </v-row>
+                    
+
+                   
+
+                    <v-row>
+                      <v-col cols="12" sm="12" md="12">
                         <div
                           class="red--text"
                           v-for="v in validaMensaje"
                           :key="v"
                           v-text="v"
                         ></div>
-                      </v-flex>
-                    </v-layout>
+                      </v-col>
+                    </v-row>
                   </v-container>
                 </v-card-text>
 
@@ -56,7 +80,7 @@
                   <v-btn outlined color="primary2" @click.native="close"
                     >Cancelar</v-btn
                   >
-                  <v-btn color="primary" dark @click.native="guardar"
+                  <v-btn color="primary" dark @click.native="guardar()"
                     >Guardar</v-btn
                   >
                 </v-card-actions>
@@ -66,10 +90,10 @@
             <!-- <v-dialog v-model="adModal" max-width="300">
               <v-card>
                 <v-card-title class="headline" v-if="adAccion == 1"
-                  >¿Activar Item?</v-card-title
+                  >¿Eliminar Item?</v-card-title
                 >
                 <v-card-title class="headline" v-if="adAccion == 2"
-                  >¿Desactivar Item?</v-card-title
+                  >¿Eliminar Item?</v-card-title
                 >
                 <v-card-text>
                   Estás a punto de
@@ -86,7 +110,7 @@
                     color="orange darken-4"
                     flat="flat"
                     @click="activar()"
-                    >Activar</v-btn
+                    >¿Eliminar</v-btn
                   >
                   
                   <v-btn
@@ -94,17 +118,16 @@
                     color="orange darken-4"
                     flat="flat"
                     @click="desactivar()"
-                    >Desactivar</v-btn
+                    >¿Eliminar</v-btn
                   >
                  
                 </v-card-actions>
               </v-card>
-            </v-dialog> -->
-
+            </v-dialog>-->
             <v-dialog v-model="dropModal" max-width="400">
               <v-card>
                 <v-card-title class="headline"
-                  >¿Desea eliminar la Carrera?</v-card-title
+                  >¿Desea eliminar la Seccion?</v-card-title
                 >
                 <v-card-text>
                   Estás a punto de eliminar el ítem: {{ dropName }}
@@ -114,6 +137,7 @@
                   <v-btn color="green darken-1" @click="closeDropModal()"
                     >Cancelar</v-btn
                   >
+
                   <v-btn color="orange darken-4" @click="drop()"
                     >Eliminar</v-btn
                   >
@@ -145,31 +169,20 @@
           <v-icon small color="red" class="mr-2" @click="dropItem(item)">
             delete
           </v-icon>
-
-          <!-- <template v-if="item.condicion">
-            <v-icon small @click="statusItem(2, item)">
-              block
-            </v-icon>
-          </template>
-          <template v-else>
-            <v-icon small @click="statusItem(1, item)">
-              check
-            </v-icon>
-          </template>
-           -->
         </template>
 
-        <!--   <template v-slot:item.condicion="{ item }">
+        <!-- 
+        <template v-slot:item.condicion="{ item }">
           <td>
             <div v-if="item.condicion">
               <span class="blue--text">Activo</span>
             </div>
             <div v-else>
-              <span class="red--text">Inactivo</span> 
+              <span class="red--text">Inactivo</span>
             </div>
           </td>
-        </template> -->
-
+        </template>
+ -->
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">Resetear</v-btn>
         </template>
@@ -179,27 +192,35 @@
 </template>
 <script>
 import axios from "axios";
+
 export default {
   data: () => ({
-    carreras: [],
+    secciones: [],
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
-      { text: "Carrera", value: "nombre", sortable: true },
-    ],
+      { text: "Curso", value: "idcurso", sortable: true },      
+      { text: "Nombrecurso", value: "nombrecurso", sortable: true },
+      { text: "Docente", value: "iddocente", sortable: true },      
+      { text: "Nombredocente", value: "nombredocente", sortable: true },
+       ],
     search: "",
     editedIndex: -1,
 
+    //objeto
     id: "",
-    nombre: "",
+    selectsSecciones: [],
+    //
+
     valida: 0,
     validaMensaje: [],
 
-    adModal: false,
+    adModal: 0,
     adAccion: 0,
-    adNombre: "",
+    adNombre: 0,
     adId: 0,
 
+    //Drop
     dropModal: false,
     dropId: 0,
     dropName: "",
@@ -213,7 +234,7 @@ export default {
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nueva Carrera" : "Actualizando Carrera";
+      return this.editedIndex === -1 ? "Nueva Sección" : "Actualizando Sección";
     },
   },
 
@@ -225,20 +246,17 @@ export default {
 
   created() {
     this.listar();
+    this.ListSecciones();
   },
 
   methods: {
-    close() {
-      this.dialog = false;
-      this.clean();
+    remove(item) {
+      let index = this.selectsSecciones.indexOf(item.idseccion);
+      if (index >= 0) this.selectsSecciones.splice(index, 1);
     },
 
-    clean() {
-      this.id = "";
-      this.nombre = "";
-      this.editedIndex = -1;
-      this.colorsnack = "";
-      this.validaMensaje = [];
+    statusCerrar() {
+      this.adModal = 0;
     },
 
     openSnack(text, color) {
@@ -251,14 +269,10 @@ export default {
       this.dropModal = false;
     },
 
-    closeAdModal() {
-      this.adModal = false;
-    },
-
     statusItem(accion, item) {
       this.adModal = 1;
       this.adNombre = item.nombre;
-      this.adId = item.idcarrera;
+      this.adId = item.idcategoria;
 
       if (accion == 1) {
         this.adAccion = 1;
@@ -270,10 +284,10 @@ export default {
     },
     activar() {
       let me = this;
-      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .put("api/Carreras/Activar/" + this.adId)
+        .put("api/Categorias/Activar/" + this.adId, {}, configuracion)
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -287,10 +301,10 @@ export default {
     },
     desactivar() {
       let me = this;
-      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
+      let header = { Authorization: "Bearer " + this.$store.state.token };
+      let configuracion = { headers: header };
       axios
-        .put("api/Carreras/Desactivar/" + this.adId, {})
+        .put("api/Categorias/Desactivar/" + this.adId, {}, configuracion)
         .then(function(response) {
           me.adModal = 0;
           me.adAccion = 0;
@@ -305,12 +319,30 @@ export default {
 
     listar() {
       let me = this;
-      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
       axios
-        .get("api/Carreras")
-        .then((response) => {
-          me.carreras = response.data;
+        .get("api/Secciones")
+        .then(function(response) {
+          me.secciones = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+
+  
+
+    selectCarreras(_dialog, id) {
+      let me = this;
+      let carrerasArray = [];
+
+      axios
+        .get("api/Cursos/Carreras/" + id)
+        .then(function(response) {
+          carrerasArray = response.data;
+          carrerasArray.map(function(x) {
+            me.selectsCarreras.push(x.idcarrera);
+          });
+          _dialog();
         })
         .catch(function(error) {
           console.log(error);
@@ -318,23 +350,25 @@ export default {
     },
 
     editItem(item) {
-      this.id = item.idcarrera;
+      this.id = item.idseccion;
+      this.selectsSecciones = [];
       this.nombre = item.nombre;
       this.editedIndex = 1;
-      this.dialog = true;
+      this.selectCarreras(() => {
+        this.dialog = true;
+      }, this.id);
     },
 
     dropItem(item) {
-      this.dropModal = true;
-      this.dropId = item.idcarrera;
+      this.dropId = item.idseccion;
       this.dropName = item.nombre;
+      this.dropModal = true;
     },
-
     drop() {
       let me = this;
 
       axios
-        .delete("api/Carreras/" + me.dropId)
+        .delete("api/Secciones/" + me.dropId)
         .then(function(response) {
           me.openSnack(
             "Registro " + me.dropName + " eliminado con éxito",
@@ -348,6 +382,20 @@ export default {
         });
     },
 
+    close() {
+      this.dialog = false;
+      this.clean();
+    },
+
+    //limpiar principalmente los atributos del objeto
+    clean() {
+      this.id = "";
+      this.nombre = "";
+      this.selectsCarreras = [];
+      this.editedIndex = -1;
+      this.validaMensaje = [];
+    },
+
     guardar() {
       if (this.validar()) {
         return;
@@ -356,17 +404,17 @@ export default {
       if (this.editedIndex > -1) {
         //Código para editar
         let me = this;
-        //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-        //let configuracion ={headers : header};
+
         axios
-          .put("api/Carreras", {
-            idcarrera: me.id,
+          .put("api/Secciones", {
+            idseccion: me.id,
             nombre: me.nombre,
+            secciones: me.selectsSecciones,
           })
           .then(function(response) {
             me.openSnack(
               "Registro " + me.nombre + " actualizado con éxito",
-              "indigo"
+              "blue"
             );
             me.close();
             me.listar();
@@ -377,11 +425,11 @@ export default {
       } else {
         //Código para guardar
         let me = this;
-        //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-        //let configuracion ={headers : header};
+
         axios
-          .post("api/Carreras", {
+          .post("api/Cursos", {
             nombre: me.nombre,
+            carreras: me.selectsCarreras,
           })
           .then(function(response) {
             me.openSnack(
@@ -403,9 +451,14 @@ export default {
 
       if (this.nombre.length < 10 || this.nombre.length > 100) {
         this.validaMensaje.push(
-          "El nombre debe tener más de 10 caracteres y menos de 100 caracteres"
+          "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
         );
       }
+
+      if (this.selectsCarreras.length === 0) {
+        this.validaMensaje.push("-Debe seleccionar uno o más cursos");
+      }
+
       if (this.validaMensaje.length) {
         this.valida = 1;
       }

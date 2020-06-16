@@ -8,19 +8,14 @@
           </v-toolbar-title>
           <v-spacer></v-spacer>
           <v-tooltip bottom>
-                    <template v-slot:activator="{ on }">
-                      <v-btn
-                        icon
-                        large
-                        target="_blank"
-                        v-on="on"
-                      >
-                        <v-icon>home</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>christian@hotmail.com</span>
-                    <span> / password</span> 
-                  </v-tooltip>
+            <template v-slot:activator="{ on }">
+              <v-btn icon large target="_blank" v-on="on">
+                <v-icon>home</v-icon>
+              </v-btn>
+            </template>
+            <span>christian@hotmail.com</span>
+            <span> / password</span>
+          </v-tooltip>
         </v-toolbar>
         <v-card-text>
           <v-text-field
@@ -56,6 +51,7 @@
 </template>
 <script>
 import axios from "axios";
+
 export default {
   data() {
     return {
@@ -88,7 +84,7 @@ export default {
           } else {
             this.error = "Ocurrió un error";
           }
-          console.log(err);
+          console.log(err.response);
         });
     },
   },

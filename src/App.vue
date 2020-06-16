@@ -39,7 +39,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item router :to="{ name: 'curso1' }">
+            <v-list-item router :to="{ name: 'seccion' }">
               <v-list-item-action>
                 <v-icon>book</v-icon>
               </v-list-item-action>
@@ -70,13 +70,13 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item router :to="{ name: '' }">
+            <v-list-item router :to="{ name: 'docente' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Profesores
+                  Docentes
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
