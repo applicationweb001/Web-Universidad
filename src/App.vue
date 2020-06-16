@@ -59,13 +59,13 @@
               </v-list-item-content>
             </template>
 
-            <v-list-item router :to="{ name: '' }">
+            <v-list-item router :to="{ name: 'alumno' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Alumnos
+                  Alumnosnpm
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
