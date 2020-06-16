@@ -40,30 +40,28 @@
                         ></v-text-field>
                       </v-col>
                     </v-row>
+
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
-                        <v-autocomplete
-                          v-model="selectsCarreras"
-                          :items="carreras"
-                          filled
-                          chips
-                          label="Carreras"
-                          multiple
-                          item-text="nombre"
-                          item-value="idcarrera"
-                        >
-                          <template v-slot:selection="data">
-                            <v-chip
-                              v-bind="data.attrs"
-                              :input-value="data.selected"
-                              close
-                              @click="data.select"
-                              @click:close="remove(data.item)"
-                            >
-                              {{ data.item.nombre }}
-                            </v-chip>
-                          </template>
-                        </v-autocomplete>
+                        <v-text-field
+                          v-model="apellido"
+                          label="Apellido"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <v-row>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field
+                          v-model="correo"
+                          label="Correo"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+
+                    <v-row>
+                      <v-col cols="12" sm="12" md="12">
+                        <v-text-field v-model="dni" label="DNI"></v-text-field>
                       </v-col>
                     </v-row>
 
@@ -92,43 +90,6 @@
               </v-card>
             </v-dialog>
 
-            <!-- <v-dialog v-model="adModal" max-width="300">
-              <v-card>
-                <v-card-title class="headline" v-if="adAccion == 1"
-                  >¿Eliminar Item?</v-card-title
-                >
-                <v-card-title class="headline" v-if="adAccion == 2"
-                  >¿Eliminar Item?</v-card-title
-                >
-                <v-card-text>
-                  Estás a punto de
-                  <span v-if="adAccion == 1">Activar</span>
-                  <span v-if="adAccion == 2">Desactivar</span>
-                  el ítem {{ adNombre }}
-                </v-card-text>
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="green darken-1" flat="flat" @click="statusCerrar()">Cancelar</v-btn>
-
-                  <v-btn
-                    v-if="adAccion == 1"
-                    color="orange darken-4"
-                    flat="flat"
-                    @click="activar()"
-                    >¿Eliminar</v-btn
-                  >
-                  
-                  <v-btn
-                    v-if="adAccion == 2"
-                    color="orange darken-4"
-                    flat="flat"
-                    @click="desactivar()"
-                    >¿Eliminar</v-btn
-                  >
-                 
-                </v-card-actions>
-              </v-card>
-            </v-dialog>-->
             <v-dialog v-model="dropModal" max-width="400">
               <v-card>
                 <v-card-title class="headline"
@@ -176,18 +137,6 @@
           </v-icon>
         </template>
 
-        <!-- 
-        <template v-slot:item.condicion="{ item }">
-          <td>
-            <div v-if="item.condicion">
-              <span class="blue--text">Activo</span>
-            </div>
-            <div v-else>
-              <span class="red--text">Inactivo</span>
-            </div>
-          </td>
-        </template>
- -->
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">Resetear</v-btn>
         </template>
@@ -206,7 +155,7 @@ export default {
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
       { text: "Docentes", value: "nombre", sortable: true },
-      { text: "Carreras", value: "carreras", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
+      //{ text: "Carreras", value: "carreras", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
     ],
     search: "",
     editedIndex: -1,
@@ -214,7 +163,7 @@ export default {
     //objeto
     id: "",
     nombre: "",
-    selectsCarreras: [],
+    //selectsCarreras: [],
     //
 
     valida: 0,
@@ -251,14 +200,14 @@ export default {
 
   created() {
     this.listar();
-    this.ListCarreras();
+    // this.ListCarreras();
   },
 
   methods: {
-    remove(item) {
+    /* remove(item) {
       let index = this.selectsCarreras.indexOf(item.idcarrera);
       if (index >= 0) this.selectsCarreras.splice(index, 1);
-    },
+    }, */
 
     statusCerrar() {
       this.adModal = 0;
@@ -277,7 +226,6 @@ export default {
     statusItem(accion, item) {
       this.adModal = 1;
       this.adNombre = item.nombre;
-      this.adId = item.idcategoria;
 
       if (accion == 1) {
         this.adAccion = 1;
@@ -286,40 +234,6 @@ export default {
       } else {
         this.adModal = 0;
       }
-    },
-    activar() {
-      let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let configuracion = { headers: header };
-      axios
-        .put("api/Categorias/Activar/" + this.adId, {}, configuracion)
-        .then(function(response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    desactivar() {
-      let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let configuracion = { headers: header };
-      axios
-        .put("api/Categorias/Desactivar/" + this.adId, {}, configuracion)
-        .then(function(response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
     },
 
     listar() {
@@ -333,7 +247,7 @@ export default {
           console.log(error);
         });
     },
-/*
+    /*
     ListCarreras() {
       let me = this;
       let carrerasArray = [];
@@ -352,7 +266,7 @@ export default {
         });
     },*/
 
-  /*  selectCarreras(_dialog, id) {
+    /*  selectCarreras(_dialog, id) {
       let me = this;
       let carrerasArray = [];
 
@@ -372,15 +286,19 @@ export default {
 
     editItem(item) {
       this.id = item.iddocente;
-      
       this.nombre = item.nombre;
+      this.apellido = item.apellido;
+      this.correo = item.correo;
+      this.dni = item.dni;
       this.editedIndex = 1;
-     
     },
 
     dropItem(item) {
       this.dropId = item.iddocente;
       this.dropName = item.nombre;
+      this.dropSurname = item.apellido;
+      this.dropEmail = item.correo;
+      this.dropPassport = item.dni;
       this.dropModal = true;
     },
     drop() {
@@ -410,7 +328,9 @@ export default {
     clean() {
       this.id = "";
       this.nombre = "";
-      
+      this.apellido = "";
+      this.correo = "";
+      this.dni = "";
       this.editedIndex = -1;
       this.validaMensaje = [];
     },
@@ -428,7 +348,9 @@ export default {
           .put("api/Docentes", {
             iddocente: me.id,
             nombre: me.nombre,
-           
+            apellido: me.apellido,
+            correo: me.correo,
+            dni: me.dni,
           })
           .then(function(response) {
             me.openSnack(
@@ -448,7 +370,9 @@ export default {
         axios
           .post("api/Docentes", {
             nombre: me.nombre,
-            
+            apellido: me.apellido,
+            correo: me.correo,
+            dni: me.dni,
           })
           .then(function(response) {
             me.openSnack(
