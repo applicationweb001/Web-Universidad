@@ -6,6 +6,7 @@ import Curso1 from "../components/AdministracionAcademica/Carrera.vue";
 import Login from "../components/Seguridad/Login.vue";
 import store from "../store/index.js";
 import Matricula from "../components/AdministracionAcademica/Matricula.vue";
+import Docente from "../components/AdministracionAcademica/Docente.vue";
 
 Vue.use(VueRouter);
 
@@ -34,6 +35,11 @@ const routes = [
     path: "/matricula", //este es la ruta del navegador
     name: "matricula", //este nombre es el que se usa en el html
     component: Matricula,
+  },
+  {
+    path: "/docente", //este es la ruta del navegador
+    name: "docente", //este nombre es el que se usa en el html
+    component: Docente,
   },
 ];
 

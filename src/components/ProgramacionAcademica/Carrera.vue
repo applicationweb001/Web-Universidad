@@ -114,7 +114,6 @@
                   <v-btn color="green darken-1" @click="closeDropModal()"
                     >Cancelar</v-btn
                   >
-
                   <v-btn color="orange darken-4" @click="drop()"
                     >Eliminar</v-btn
                   >
@@ -190,6 +189,7 @@ export default {
     ],
     search: "",
     editedIndex: -1,
+
     id: "",
     nombre: "",
     valida: 0,
