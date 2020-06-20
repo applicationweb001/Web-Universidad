@@ -33,35 +33,34 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-select
-                          v-model="idcurso"
-                          : items = "cursos"
-                          label="Curso"                        
-                        ></v-select>
+                      <v-col cols="12" sm="10" md="10">
+                          <v-autocomplete
+                          v-model="objseccion.curso.idcurso"
+                          :items="cursos"
+                          label="Curso"
+                        ></v-autocomplete>
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="12" sm="12" md="12">
-                        <v-select
-                          v-model="iddocente"
-                          : items = "docentes"
+                      <v-col cols="12" sm="10" md="10">
+                        <v-autocomplete                 
+                          v-model="objseccion.docente.iddocente"
+                          :items="docentes"
                           label="Docente"                        
-                        ></v-select>
+                       ></v-autocomplete>
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="12" sm="12" md="12">
+                      <v-col cols="12" sm="10" md="10">
                         <v-text-field
-                          v-model="cantidad"
-                          label="Cantidad"                        
+                          readonly
+                          filled
+                          v-model="objseccion.cantidad"
+                          label="Límite de alumnos"                        
                         ></v-text-field>
                       </v-col>                      
                     </v-row>
-                    
-
-                   
-
+                                       
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <div
@@ -195,21 +194,35 @@ import axios from "axios";
 
 export default {
   data: () => ({
+    docentes: [],
+    cursos: [],
     secciones: [],
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
       { text: "Curso", value: "idcurso", sortable: true },      
-      { text: "Nombrecurso", value: "nombrecurso", sortable: true },
+      { text: "Nombre curso", value: "nombrecurso", sortable: true },
       { text: "Docente", value: "iddocente", sortable: true },      
-      { text: "Nombredocente", value: "nombredocente", sortable: true },
+      { text: "Nombre docente", value: "nombredocente", sortable: true },
+      { text: "Código sección", value: "codigo_seccion", sortable: true},
        ],
     search: "",
     editedIndex: -1,
 
     //objeto
-    id: "",
-    selectsSecciones: [],
+    objseccion:{
+      id :"",
+      curso :{
+          idcurso:"",
+          nombre :"",
+          codigo :""
+      },
+      docente :{
+        iddocente:"",
+        nombre :""
+      },
+      cantidad :10
+    },
     //
 
     valida: 0,
@@ -246,7 +259,8 @@ export default {
 
   created() {
     this.listar();
-    this.ListSecciones();
+    this.listardocentes();
+    this.listarcursos();
   },
 
   methods: {
@@ -323,6 +337,38 @@ export default {
         .get("api/Secciones")
         .then(function(response) {
           me.secciones = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+
+    listardocentes() {
+      let me = this;
+        let docentesArray = [];
+      axios
+        .get("api/docentes")
+        .then(function(response) {
+          docentesArray = response.data;
+          docentesArray.map(function(x) {
+            me.docentes.push({ text: x.nombre, value: x.iddocente });
+          })
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+
+    listarcursos() {
+      let me = this;
+      let cursosArray = [];
+      axios
+        .get("api/cursos")
+        .then(function(response) {
+          cursosArray = response.data;
+          cursosArray.map(function(x) {
+            me.cursos.push({ text: x.nombre, value: x.idcurso });
+          });
         })
         .catch(function(error) {
           console.log(error);
@@ -407,13 +453,15 @@ export default {
 
         axios
           .put("api/Secciones", {
-            idseccion: me.id,
-            nombre: me.nombre,
-            secciones: me.selectsSecciones,
+            idseccion: me.objseccion.id,
+            idcurso: me.objseccion.curso.idcurso,
+            iddocente: me.objseccion.docente.iddocente,
+            cantidad: me.objseccion.cantidad,
+            codigo_curso: me.objseccion.curso.codigo_curso
           })
           .then(function(response) {
             me.openSnack(
-              "Registro " + me.nombre + " actualizado con éxito",
+              "Registro " + response.codigo_seccion + " actualizado con éxito",
               "blue"
             );
             me.close();
@@ -427,36 +475,42 @@ export default {
         let me = this;
 
         axios
-          .post("api/Cursos", {
-            nombre: me.nombre,
-            carreras: me.selectsCarreras,
+          .post("api/Secciones", {
+            iddocente: me.objseccion.docente.iddocente,
+            idcurso: me.objseccion.curso.idcurso,
+            cantidad: me.objseccion.cantidad,
+            codigo_curso: "1234"
           })
           .then(function(response) {
             me.openSnack(
-              "Registro " + me.nombre + " creado con éxito",
+              "Registro " + response.codigo_seccion + " creado con éxito",
               "green"
             );
             me.close();
             me.listar();
+            console.log(response);
           })
           .catch(function(error) {
             console.log(error);
           });
       }
     },
-
+    
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.nombre.length < 10 || this.nombre.length > 100) {
-        this.validaMensaje.push(
-          "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
-        );
-      }
+      //if (this.nombre.length < 10 || this.nombre.length > 100) {
+       // this.validaMensaje.push(
+       //   "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
+        //);
+      //}
 
-      if (this.selectsCarreras.length === 0) {
-        this.validaMensaje.push("-Debe seleccionar uno o más cursos");
+      if (this.objseccion.curso.idcurso <= 0) {
+        this.validaMensaje.push("Debe seleccionar un curso");
+      }
+      if (this.objseccion.docente.iddocente <= 0) {
+        this.validaMensaje.push("Debe seleccionar un docente");
       }
 
       if (this.validaMensaje.length) {
