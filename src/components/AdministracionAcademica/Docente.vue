@@ -3,7 +3,7 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="docente"
+        :items="docentes"
         :search="search"
         sort-by="calories"
         class="elevation-1"
@@ -149,12 +149,18 @@ import axios from "axios";
 
 export default {
   data: () => ({
-    Docentes: [],
-    carreras: [],
+    docentes: [],
+   
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
-      { text: "Docentes", value: "nombre", sortable: true },
+      { text: "ID", value: "iddocente", sortable: true },
+      { text: "Nombre", value: "nombre", sortable: true },
+      { text: "Apellido", value: "apellido", sortable: true },
+      { text: "Correo", value: "correo", sortable: true },
+      { text: "DNI", value: "dni", sortable: true },
+
+      
       //{ text: "Carreras", value: "carreras", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
     ],
     search: "",
@@ -163,6 +169,9 @@ export default {
     //objeto
     id: "",
     nombre: "",
+    correo:"",
+    apellido:"",
+    dni:"",
     //selectsCarreras: [],
     //
 
@@ -233,7 +242,7 @@ export default {
       let me = this;
       axios
         .get("api/Docentes")
-        .then(function(response) {
+        .then((response) => {
           me.docentes = response.data;
         })
         .catch(function(error) {
@@ -340,6 +349,7 @@ export default {
             );
             me.close();
             me.listar();
+            console.log(response);
           })
           .catch(function(error) {
             console.log(error);
