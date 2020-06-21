@@ -205,6 +205,8 @@ export default {
       { text: "Docente", value: "iddocente", sortable: true },      
       { text: "Nombre docente", value: "nombredocente", sortable: true },
       { text: "Código sección", value: "codigo_seccion", sortable: true},
+      { text: "Ciclo académico", value: "ciclo_academico", sortable: true},
+      { text: "Fecha de creación", value: "inserted_data", sortable: true},
        ],
     search: "",
     editedIndex: -1,
@@ -479,7 +481,6 @@ export default {
             iddocente: me.objseccion.docente.iddocente,
             idcurso: me.objseccion.curso.idcurso,
             cantidad: me.objseccion.cantidad,
-            codigo_curso: "1234"
           })
           .then(function(response) {
             me.openSnack(
