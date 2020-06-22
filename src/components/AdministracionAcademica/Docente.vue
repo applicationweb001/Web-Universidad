@@ -3,7 +3,7 @@
     <v-flex>
       <v-data-table
         :headers="headers"
-        :items="docente"
+        :items="docentes"
         :search="search"
         sort-by="calories"
         class="elevation-1"
@@ -149,12 +149,18 @@ import axios from "axios";
 
 export default {
   data: () => ({
-    Docentes: [],
-    carreras: [],
+    docentes: [],
+   
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
-      { text: "Docentes", value: "nombre", sortable: true },
+      { text: "ID", value: "iddocente", sortable: true },
+      { text: "Nombre", value: "nombre", sortable: true },
+      { text: "Apellido", value: "apellido", sortable: true },
+      { text: "Correo", value: "correo", sortable: true },
+      { text: "DNI", value: "dni", sortable: true },
+
+      
       //{ text: "Carreras", value: "carreras", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
     ],
     search: "",
@@ -163,6 +169,9 @@ export default {
     //objeto
     id: "",
     nombre: "",
+    correo:"",
+    apellido:"",
+    dni:"",
     //selectsCarreras: [],
     //
 
@@ -204,14 +213,7 @@ export default {
   },
 
   methods: {
-    /* remove(item) {
-      let index = this.selectsCarreras.indexOf(item.idcarrera);
-      if (index >= 0) this.selectsCarreras.splice(index, 1);
-    }, */
-
-    statusCerrar() {
-      this.adModal = 0;
-    },
+  
 
     openSnack(text, color) {
       this.textSnack = text;
@@ -240,49 +242,14 @@ export default {
       let me = this;
       axios
         .get("api/Docentes")
-        .then(function(response) {
+        .then((response) => {
           me.docentes = response.data;
         })
         .catch(function(error) {
           console.log(error);
         });
     },
-    /*
-    ListCarreras() {
-      let me = this;
-      let carrerasArray = [];
-
-      axios
-        .get("api/Carreras/select")
-        .then(function(response) {
-          //console.log(response);
-          carrerasArray = response.data;
-          carrerasArray.map(function(x) {
-            me.carreras.push({ nombre: x.nombre, idcarrera: x.idcarrera });
-          });
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },*/
-
-    /*  selectCarreras(_dialog, id) {
-      let me = this;
-      let carrerasArray = [];
-
-      axios
-        .get("api/Cursos/Carreras/" + id)
-        .then(function(response) {
-          carrerasArray = response.data;
-          carrerasArray.map(function(x) {
-            me.selectsCarreras.push(x.idcarrera);
-          });
-          _dialog();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },*/
+    
 
     editItem(item) {
       this.id = item.iddocente;
@@ -332,6 +299,7 @@ export default {
       this.correo = "";
       this.dni = "";
       this.editedIndex = -1;
+      this.colorsnack = "";
       this.validaMensaje = [];
     },
 
@@ -381,6 +349,7 @@ export default {
             );
             me.close();
             me.listar();
+            console.log(response);
           })
           .catch(function(error) {
             console.log(error);
@@ -392,14 +361,10 @@ export default {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.nombre.length < 10 || this.nombre.length > 100) {
+      if (this.nombre.length < 5 || this.nombre.length > 100) {
         this.validaMensaje.push(
-          "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
+          "El nombre debe tener por lo menos 5 caracteres y menos de 100 caracteres"
         );
-      }
-
-      if (this.selectsCarreras.length === 0) {
-        this.validaMensaje.push("-Debe seleccionar uno o más docentes");
       }
 
       if (this.validaMensaje.length) {
