@@ -9,6 +9,9 @@ import Matricula from "../components/AdministracionAcademica/Matricula.vue";
 import Alumno from "../components/AdministracionAcademica/Alumno.vue";
 import Seccion from "../components/ProgramacionAcademica/Seccion.vue";
 import Docente from "../components/AdministracionAcademica/Docente.vue";
+import Rol from "../components/Seguridad/Rol.vue";
+import Usuario from "../components/Seguridad/Usuario.vue";
+
 
 Vue.use(VueRouter);
 
@@ -54,6 +57,16 @@ const routes = [
     path: "/docente", //este es la ruta del navegador
     name: "docente", //este nombre es el que se usa en el html
     component: Docente,
+  },
+  {
+    path: "/rol", //este es la ruta del navegador
+    name: "rol", //este nombre es el que se usa en el html
+    component: Rol,
+  },
+  {
+    path: "/usuario", //este es la ruta del navegador
+    name: "usuario", //este nombre es el que se usa en el html
+    component: Usuario,
   },
 ];
 

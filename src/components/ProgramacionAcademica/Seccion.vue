@@ -206,7 +206,6 @@ export default {
       { text: "Nombre docente", value: "nombredocente", sortable: true },
       { text: "Código sección", value: "codigo_seccion", sortable: true},
       { text: "Ciclo académico", value: "ciclo_academico", sortable: true},
-      { text: "Fecha de creación", value: "inserted_data", sortable: true},
        ],
     search: "",
     editedIndex: -1,
