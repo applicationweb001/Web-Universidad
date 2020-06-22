@@ -76,15 +76,17 @@ export default {
           this.$router.push({ name: "inicio" });
         })
         .catch((err) => {
-          //console.log(err.response);
-          if (err.response.status == 400) {
-            this.error = "No es un email válido";
-          } else if (err.response.status == 404) {
-            this.error = "No existe el usuario o sus datos son incorrectos";
+          if (err.response == undefined) {
+            this.error = "Ocurrió un error de conexión con el servidor";
           } else {
-            this.error = "Ocurrió un error";
+            if (err.response.status == 400) {
+              this.error = "No es un email válido";
+            } else if (err.response.status == 404) {
+              this.error = "No existe el usuario o sus datos son incorrectos";
+            } else {
+              this.error = "Ocurrió un error";
+            }
           }
-          console.log(err.response);
         });
     },
   },

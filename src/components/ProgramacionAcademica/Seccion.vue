@@ -36,8 +36,8 @@
                       <v-col cols="12" sm="12" md="12">
                         <v-select
                           v-model="idcurso"
-                          : items = "cursos"
-                          label="Curso"                        
+                          :items="cursos"
+                          label="Curso"
                         ></v-select>
                       </v-col>
                     </v-row>
@@ -45,8 +45,8 @@
                       <v-col cols="12" sm="12" md="12">
                         <v-select
                           v-model="iddocente"
-                          : items = "docentes"
-                          label="Docente"                        
+                          :items="docentes"
+                          label="Docente"
                         ></v-select>
                       </v-col>
                     </v-row>
@@ -54,13 +54,10 @@
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field
                           v-model="cantidad"
-                          label="Cantidad"                        
+                          label="Cantidad"
                         ></v-text-field>
-                      </v-col>                      
+                      </v-col>
                     </v-row>
-                    
-
-                   
 
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
@@ -183,6 +180,7 @@
           </td>
         </template>
  -->
+
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">Resetear</v-btn>
         </template>
@@ -199,11 +197,11 @@ export default {
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
-      { text: "Curso", value: "idcurso", sortable: true },      
+      { text: "Curso", value: "idcurso", sortable: true },
       { text: "Nombrecurso", value: "nombrecurso", sortable: true },
-      { text: "Docente", value: "iddocente", sortable: true },      
+      { text: "Docente", value: "iddocente", sortable: true },
       { text: "Nombredocente", value: "nombredocente", sortable: true },
-       ],
+    ],
     search: "",
     editedIndex: -1,
 
@@ -250,11 +248,6 @@ export default {
   },
 
   methods: {
-    remove(item) {
-      let index = this.selectsSecciones.indexOf(item.idseccion);
-      if (index >= 0) this.selectsSecciones.splice(index, 1);
-    },
-
     statusCerrar() {
       this.adModal = 0;
     },
@@ -282,40 +275,6 @@ export default {
         this.adModal = 0;
       }
     },
-    activar() {
-      let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let configuracion = { headers: header };
-      axios
-        .put("api/Categorias/Activar/" + this.adId, {}, configuracion)
-        .then(function(response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    desactivar() {
-      let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let configuracion = { headers: header };
-      axios
-        .put("api/Categorias/Desactivar/" + this.adId, {}, configuracion)
-        .then(function(response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
 
     listar() {
       let me = this;
@@ -328,8 +287,6 @@ export default {
           console.log(error);
         });
     },
-
-  
 
     selectCarreras(_dialog, id) {
       let me = this;

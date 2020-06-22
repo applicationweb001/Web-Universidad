@@ -6,12 +6,9 @@ import Curso1 from "../components/AdministracionAcademica/Carrera.vue";
 import Login from "../components/Seguridad/Login.vue";
 import store from "../store/index.js";
 import Matricula from "../components/AdministracionAcademica/Matricula.vue";
-<<<<<<< HEAD
 import Alumno from "../components/AdministracionAcademica/Alumno.vue";
-=======
 import Seccion from "../components/ProgramacionAcademica/Seccion.vue";
 import Docente from "../components/AdministracionAcademica/Docente.vue";
->>>>>>> eb913e01ef81a4d40664d64c48680b9b5ce48b33
 
 Vue.use(VueRouter);
 
@@ -32,7 +29,6 @@ const routes = [
     component: Curso1,
   },
   {
-
     path: "/alumno", //este es la ruta del navegador
     name: "alumno", //este nombre es el que se usa en el html
     component: Alumno,
@@ -41,7 +37,6 @@ const routes = [
     path: "/seccion", //este es la ruta del navegador
     name: "seccion", //este nombre es el que se usa en el html
     component: Seccion,
-
   },
   {
     path: "/login",
