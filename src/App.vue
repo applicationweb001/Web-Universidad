@@ -65,7 +65,7 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>
-                  Alumnosnpm
+                  Alumnos
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -100,7 +100,7 @@
               </v-list-item-content>
             </template>
 
-            <v-list-item router :to="{ name: 'carrera' }">
+            <v-list-item router :to="{ name: 'usuario' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
@@ -111,7 +111,7 @@
               </v-list-item-content>
             </v-list-item>
 
-            <v-list-item router :to="{ name: '' }">
+            <v-list-item router :to="{ name: 'rol' }">
               <v-list-item-action>
                 <v-icon>book</v-icon>
               </v-list-item-action>

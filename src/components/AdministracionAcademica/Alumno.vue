@@ -33,49 +33,60 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="12" md="12">
+                      <v-col cols="12" sm="6" md="6">
                         <v-text-field
                           v-model="nombre"
-                          label="Nombre"
+                          label="Nombre(s)"
+                        ></v-text-field>
+                      </v-col>
+                      
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field
+                          v-model="apellido"
+                          label="Apellidos"
                         ></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field
-                          v-model="dni"
-                          label="DNI"
-                        ></v-text-field>
+                        <v-text-field v-model="dni" label="DNI"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-        <v-menu
-          ref="menu"
-          v-model="menu"
-          :close-on-content-click="false"
-          :return-value.sync="date"
-          transition="scale-transition"
-          offset-y
-          min-width="290px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="date"
-              label="Picker in menu"
-              prepend-icon="event"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-date-picker v-model="date" no-title scrollable>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-            <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-          </v-date-picker>
-        </v-menu>
-      </v-col>
+                        <v-menu
+                          ref="menu"
+                          v-model="menu"
+                          :close-on-content-click="false"
+                          :return-value.sync="date"
+                          transition="scale-transition"
+                          offset-y
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on, attrs }">
+                            <v-text-field
+                              v-model="date"
+                              label="Picker in menu"
+                              prepend-icon="event"
+                              readonly
+                              v-bind="attrs"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker v-model="date" no-title scrollable>
+                            <v-spacer></v-spacer>
+                            <v-btn text color="primary" @click="menu = false"
+                              >Cancel</v-btn
+                            >
+                            <v-btn
+                              text
+                              color="primary"
+                              @click="$refs.menu.save(date)"
+                              >OK</v-btn
+                            >
+                          </v-date-picker>
+                        </v-menu>
+                      </v-col>
                     </v-row>
-                    
+
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field
@@ -87,9 +98,9 @@
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <v-select
-                        v-model="idcarrera"
-                        :items="carreras"
-                        label="Carrera ps causa"
+                          v-model="idcarrera"
+                          :items="carreras"
+                          label="Carrera ps causa"
                         ></v-select>
                       </v-col>
                     </v-row>
@@ -236,15 +247,19 @@ export default {
       { text: "Apellido", value: "apellido", sortable: true },
       { text: "Carreras", value: "nombreCarrera", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
       { text: "DNI", value: "dni", sortable: true },
-      { text: "Fecha de Nacimiento", value: "fechanacimiento", sortable: true },
+      { text: "Fecha de Nacimiento", value: "fechanacimiento", sortable: true }
     ],
     search: "",
     editedIndex: -1,
 
     //objeto
     id: "",
-    nombre: "",
     idcarrera: 0,
+    nombre: "",
+    apellido :"",
+    dni :"",
+    date:"",
+    direccion :"",
 
     date: new Date().toISOString().substr(0, 10),
     menu: false,
@@ -266,26 +281,25 @@ export default {
     //ControlSnack
     snackbar: false,
     textSnack: "",
-    colorSnack: "",
+    colorSnack: ""
     //
   }),
 
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo Alumno" : "Actualizando Alumno";
-    },
+    }
   },
 
   watch: {
     dialog(val) {
       val || this.close();
-    },
+    }
   },
 
   created() {
     this.listar();
     this.ListCarreras();
-    this.ListAlumnos();
   },
 
   methods: {
@@ -386,9 +400,8 @@ export default {
         });
     },
 
-       editItem(item) {
+    editItem(item) {
       this.id = item.idalumno;
-      this.selectsAlumnos = [];
       this.nombre = item.nombre;
       this.editedIndex = 1;
       this.selectAlumnos(() => {
@@ -469,11 +482,15 @@ export default {
         axios
           .post("api/Alumnos", {
             nombre: me.nombre,
-            carreras: me.selectsCarreras,
+            apellido : me.apellido,
+            idcarrera: me.idcarrera,
+            direccion : me.direccion,
+            fechaNacimiento : me.date,
+            dni : parseInt(me.dni) 
           })
           .then(function(response) {
             me.openSnack(
-              "Registro " + me.nombre + " creado con éxito",
+              "Registro (" + me.nombre + ") creado con éxito",
               "green"
             );
             me.close();
@@ -495,13 +512,11 @@ export default {
         );
       }
 
-      
-
       if (this.validaMensaje.length) {
         this.valida = 1;
       }
       return this.valida;
-    },
-  },
+    }
+  }
 };
 </script>
