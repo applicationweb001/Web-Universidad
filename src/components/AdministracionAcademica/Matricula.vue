@@ -2,10 +2,30 @@
   <v-layout aling-start>
     <v-container>
       <v-row>
-        <v-col cols="12" sm="12" md="12">
+       <v-col cols="12" sm="4">
           <v-text-field
-            v-model="nombre"
-            label="Info de la cantidad de cursos  Disponibles 3/4 algo así"
+            value="Ciclo Academico: 2020-01"
+            label=""
+            solo
+            readonly
+          ></v-text-field>
+          </v-col>
+
+       <v-col cols="12" sm="4"> 
+            <v-text-field
+            value="Máxima cantidad de cursos: 4"
+            label=""
+            solo
+            readonly
+          ></v-text-field>
+        </v-col>
+
+         <v-col cols="12" sm="4"> 
+            <v-text-field
+            value="Carrera: "
+            label=""
+            solo
+            readonly
           ></v-text-field>
         </v-col>
       </v-row>
@@ -32,8 +52,7 @@
                           <v-data-table
                             v-model="seccionesSelect"
                             :headers="headersSeccionesCursos"
-                            :items="secciones" 
-                
+                            :items="secciones"                 
                             class="elevation-1"
                           >
                            <template template v-slot:item.seleccionar="{ item }">
@@ -68,9 +87,6 @@
                 add
               </v-icon>
             </template>
-            <template v-slot:no-data>
-              <v-btn color="primary" @click="initialize">Reset</v-btn>
-            </template>
           </v-data-table>
         </v-col>
         <v-col cols="12" sm="6" md="6">
@@ -92,6 +108,15 @@
               <v-btn color="primary" >Por favor Seleccione Cursos</v-btn>
             </template>
 
+            <template v-slot:item.borrar="{ item }">
+                <v-icon
+                  small color="red" class="mr-2"
+                  @click="eliminarSeccion(seccionesSelect, item)"
+                >
+                  delete
+                </v-icon>
+              </template>
+          
            
           </v-data-table>
           </v-col>
@@ -137,26 +162,13 @@ export default {
    
    ],
     headersSeccionesSelect: [
+      { text: "Borrar", value: "borrar", sortable: true },
       { text: "Curso", value: "nombreCurso", sortable: true },
       { text: "Codigo Seccion", value: "codigo_seccion", sortable: true },
       { text: "Profesor", value: "nombreDocente", sortable: true },
-    
     ],
 
-    editedItem: {
-      name: "",
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0,
-    },
-
-    search: "",
-    editedIndex: -1,
-
     //Objeto
-    id: "",
-    nombre: "",
     valida: 0,
     validaMensaje: [],
 
@@ -177,13 +189,7 @@ export default {
     colorSnack: "",
     //
   }),
-
-  computed: {
-    formTitle() {
-      return this.editedIndex === -1 ? "Nueva Carrera" : "Actualizando Carrera";
-    },
-  },
-
+  
   watch: {
     dialog(val) {
       val || this.close();
@@ -201,11 +207,7 @@ export default {
     },
 
     clean() {
-      this.id = "";
-      this.nombre = "";
-      this.editedIndex = -1;
-      this.colorsnack = "";
-      this.validaMensaje = [];
+
     },
 
     openSnack(text, color) {
@@ -222,20 +224,7 @@ export default {
       this.adModal = false;
     },
 
-    statusItem(accion, item) {
-      this.adModal = 1;
-      this.adNombre = item.nombre;
-      this.adId = item.idcarrera;
-
-      if (accion == 1) {
-        this.adAccion = 1;
-      } else if (accion == 2) {
-        this.adAccion = 2;
-      } else {
-        this.adModal = 0;
-      }
-    },
-
+    
     agregarSeccion(data = []){
       if(this.encuentraCurso(data["idcurso"]))
       {
@@ -266,46 +255,11 @@ export default {
     validCantidadMatriculado()
     {
       var valid=true;
-      if(this.seccionesSelect.length>4)
+      if(this.seccionesSelect.length>4 || this.seccionesSelect.length<1)
       {
         valid= false;
       }
       return valid;
-    },
-
-    activar() {
-      let me = this;
-      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
-      axios
-        .put("api/Carreras/Activar/" + this.adId)
-        .then(function(response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    desactivar() {
-      let me = this;
-      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
-      //let configuracion ={headers : header};
-      axios
-        .put("api/Carreras/Desactivar/" + this.adId, {})
-        .then(function(response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
     },
 
     listar() {
@@ -358,12 +312,17 @@ export default {
           console.log(error);
         });
     },
-
+eliminarSeccion(arr, item) {
+      var i = arr.indexOf(item);
+      if (i !== -1) {
+        arr.splice(i, 1);
+      }
+    },
     guardar() {
-     /*  if (this.validar()) {
+       if (this.validar()) {
         return ;
-      } */
-
+       }
+       
       if (this.editedIndex > -1) {
         //Código para editar
         let me = this;
@@ -420,15 +379,10 @@ export default {
 
     validar() {
       this.valida = 0;
-      this.validaMensaje = [];
 
-      if (this.nombre.length < 10 || this.nombre.length > 100) {
-        this.validaMensaje.push(
-          "El nombre debe tener más de 10 caracteres y menos de 100 caracteres"
-        );
-      }
-      if (this.validaMensaje.length) {
-        this.valida = 1;
+      if (!this.validCantidadMatriculado()) {
+         this.openSnack("No puede matricularse en más de 4 cursos","red");
+          valida = 1;
       }
       return this.valida;
     },
