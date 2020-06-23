@@ -12,66 +12,44 @@
       <v-row>
         <v-col cols="12" sm="6" md="6"
           ><v-data-table
-            :headers="headers"
-            :items="secciones"
+            :headers="headersCursos"
+            :items="cursos"
             sort-by="calories"
-            class="elevation-1"
-          >
+            class="elevation-1" >
             <template v-slot:top>
               <v-toolbar flat color="white">
                 <v-toolbar-title>Cursos</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-spacer></v-spacer>
                 <v-dialog v-model="dialog" max-width="500px">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      color="primary"
-                      dark
-                      class="mb-2"
-                      v-bind="attrs"
-                      v-on="on"
-                      >New Item</v-btn
-                    >
-                  </template>
                   <v-card>
                     <v-card-title>
                       <span class="headline">{{ formTitle }}</span>
                     </v-card-title>
-
                     <v-card-text>
                       <v-container>
-                        <v-row>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.name"
-                              label="Dessert name"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.calories"
-                              label="Calories"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.fat"
-                              label="Fat (g)"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.carbs"
-                              label="Carbs (g)"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.protein"
-                              label="Protein (g)"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
+                        <template>
+                          <v-data-table
+                            v-model="seccionesSelect"
+                            :headers="headersSeccionesCursos"
+                            :items="secciones" 
+                
+                            class="elevation-1"
+                          >
+                           <template template v-slot:item.seleccionar="{ item }">
+                        <td class="justify-center layout px-0">
+                          <v-icon
+                            small
+                            class="mr-2"
+                            @click="agregarSeccion(item)"
+                          >
+                            add
+                          </v-icon>
+                        </td>
+                      </template>
+
+                          </v-data-table>
+                        </template>
                       </v-container>
                     </v-card-text>
 
@@ -80,20 +58,14 @@
                       <v-btn color="blue darken-1" text @click="close"
                         >Cancel</v-btn
                       >
-                      <v-btn color="blue darken-1" text @click="save"
-                        >Save</v-btn
-                      >
                     </v-card-actions>
                   </v-card>
                 </v-dialog>
               </v-toolbar>
             </template>
-            <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)">
-                mdi-pencil
-              </v-icon>
-              <v-icon small @click="deleteItem(item)">
-                mdi-delete
+            <template v-slot:item.opcion="{ item }">
+              <v-icon small class="mr-2" @click="openseccion(item)">
+                add
               </v-icon>
             </template>
             <template v-slot:no-data>
@@ -103,8 +75,8 @@
         </v-col>
         <v-col cols="12" sm="6" md="6">
           <v-data-table
-            :headers="headers"
-            :items="secciones"
+            :headers="headersSeccionesSelect"
+            :items="seccionesSelect"
             sort-by="calories"
             class="elevation-1"
           >
@@ -113,87 +85,32 @@
                 <v-toolbar-title>Cursos matriculados</v-toolbar-title>
                 <v-divider class="mx-4" inset vertical></v-divider>
                 <v-spacer></v-spacer>
-                <v-dialog v-model="dialog" max-width="500px">
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      color="primary"
-                      dark
-                      class="mb-2"
-                      v-bind="attrs"
-                      v-on="on"
-                      >New Item</v-btn
-                    >
-                  </template>
-                  <v-card>
-                    <v-card-title>
-                      <span class="headline">{{ formTitle }}</span>
-                    </v-card-title>
-
-                    <v-card-text>
-                      <v-container>
-                        <v-row>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.name"
-                              label="Dessert name"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.calories"
-                              label="Calories"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.fat"
-                              label="Fat (g)"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.carbs"
-                              label="Carbs (g)"
-                            ></v-text-field>
-                          </v-col>
-                          <v-col cols="12" sm="6" md="4">
-                            <v-text-field
-                              v-model="editedItem.protein"
-                              label="Protein (g)"
-                            ></v-text-field>
-                          </v-col>
-                        </v-row>
-                      </v-container>
-                    </v-card-text>
-
-                    <v-card-actions>
-                      <v-spacer></v-spacer>
-                      <v-btn color="blue darken-1" text @click="close"
-                        >Cancel</v-btn
-                      >
-                      <v-btn color="blue darken-1" text @click="save"
-                        >Save</v-btn
-                      >
-                    </v-card-actions>
-                  </v-card>
-                </v-dialog>
+                <v-btn color="primary" dark class="mb-2" @click="guardar()">Guardar</v-btn>
               </v-toolbar>
             </template>
-            <template v-slot:item.actions="{ item }">
-              <v-icon small class="mr-2" @click="editItem(item)">
-                mdi-pencil
-              </v-icon>
-              <v-icon small @click="deleteItem(item)">
-                mdi-delete
-              </v-icon>
-            </template>
             <template v-slot:no-data>
-              <v-btn color="primary" @click="initialize">Reset</v-btn>
+              <v-btn color="primary" >Por favor Seleccione Cursos</v-btn>
             </template>
-          </v-data-table></v-col
-        >
+
+           
+          </v-data-table>
+          </v-col>
       </v-row>
+      
     </v-container>
+    <v-snackbar
+            v-model="snackbar"
+            :bottom="true"
+            :color="colorSnack"
+            :right="true"
+            :timeout="5000"
+          >
+            {{ textSnack }}
+
+            <v-btn dark text @click="snackbar = false">
+              Close
+            </v-btn>
+          </v-snackbar>
   </v-layout>
 </template>
 <script>
@@ -201,26 +118,29 @@ import axios from "axios";
 export default {
   data: () => ({
     secciones: [],
+    cursos: [],
     seccionesSelect: [],
+    singleSelect: true,
 
     dialog: false,
-    headers1: [
+    dialog2: false,
+
+    headersCursos: [
       { text: "Opciones", value: "opcion", sortable: false },
-      { text: "Curso", value: "nombre", sortable: true },
-      { text: "Numero de Carreras", value: "carreras", sortable: true },
+      { text: "Curso", value: "nombre", sortable: true }
     ],
-    headers: [
-      {
-        text: "Dessert (100g serving)",
-        align: "start",
-        sortable: false,
-        value: "name",
-      },
-      { text: "Calories", value: "calories" },
-      { text: "Fat (g)", value: "fat" },
-      { text: "Carbs (g)", value: "carbs" },
-      { text: "Protein (g)", value: "protein" },
-      { text: "Actions", value: "actions", sortable: false },
+    headersSeccionesCursos: [
+      { text: "Seleccionar", value: "seleccionar", sortable: false },
+      { text: "Curso", value: "nombreCurso", sortable: true },
+      { text: "Seccion", value: "codigo_seccion", sortable: true }, 
+      { text: "Profesor", value: "nombreDocente", sortable: true },
+   
+   ],
+    headersSeccionesSelect: [
+      { text: "Curso", value: "nombreCurso", sortable: true },
+      { text: "Codigo Seccion", value: "codigo_seccion", sortable: true },
+      { text: "Profesor", value: "nombreDocente", sortable: true },
+    
     ],
 
     editedItem: {
@@ -256,79 +176,6 @@ export default {
     textSnack: "",
     colorSnack: "",
     //
-
-    secciones: [
-      {
-        name: "Frozen Yogurt",
-        calories: 159,
-        fat: 6.0,
-        carbs: 24,
-        protein: 4.0,
-      },
-      {
-        name: "Ice cream sandwich",
-        calories: 237,
-        fat: 9.0,
-        carbs: 37,
-        protein: 4.3,
-      },
-      {
-        name: "Eclair",
-        calories: 262,
-        fat: 16.0,
-        carbs: 23,
-        protein: 6.0,
-      },
-      {
-        name: "Cupcake",
-        calories: 305,
-        fat: 3.7,
-        carbs: 67,
-        protein: 4.3,
-      },
-      {
-        name: "Gingerbread",
-        calories: 356,
-        fat: 16.0,
-        carbs: 49,
-        protein: 3.9,
-      },
-      {
-        name: "Jelly bean",
-        calories: 375,
-        fat: 0.0,
-        carbs: 94,
-        protein: 0.0,
-      },
-      {
-        name: "Lollipop",
-        calories: 392,
-        fat: 0.2,
-        carbs: 98,
-        protein: 0,
-      },
-      {
-        name: "Honeycomb",
-        calories: 408,
-        fat: 3.2,
-        carbs: 87,
-        protein: 6.5,
-      },
-      {
-        name: "Donut",
-        calories: 452,
-        fat: 25.0,
-        carbs: 51,
-        protein: 4.9,
-      },
-      {
-        name: "KitKat",
-        calories: 518,
-        fat: 26.0,
-        carbs: 65,
-        protein: 7,
-      },
-    ],
   }),
 
   computed: {
@@ -388,6 +235,44 @@ export default {
         this.adModal = 0;
       }
     },
+
+    agregarSeccion(data = []){
+      if(this.encuentraCurso(data["idcurso"]))
+      {
+          //error 
+      }
+      else{
+          this.seccionesSelect.push({
+          idseccion : data["idseccion"], 
+          idcurso: data["idcurso"],
+          nombreCurso: data["nombreCurso"],
+          nombreDocente: data["nombreDocente"],
+          codigo_seccion : data["codigo_seccion"],
+          
+        });         
+        }
+    },
+    encuentraCurso(id)
+    {
+      var valid = false;
+      this.seccionesSelect.forEach(element =>{
+          if(element.idcurso === id )
+          {
+              valid = true;
+          }
+      })
+      return valid;
+    },
+    validCantidadMatriculado()
+    {
+      var valid=true;
+      if(this.seccionesSelect.length>4)
+      {
+        valid= false;
+      }
+      return valid;
+    },
+
     activar() {
       let me = this;
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
@@ -437,10 +322,16 @@ export default {
         });
     },
 
-    editItem(item) {
-      this.id = item.idcarrera;
-      this.nombre = item.nombre;
-      this.editedIndex = 1;
+    openseccion(item) {
+      let me = this;
+      axios
+        .get("api/secciones/cursos/" + item.idcurso)
+        .then((response) => {
+          me.secciones = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
       this.dialog = true;
     },
 
@@ -469,9 +360,9 @@ export default {
     },
 
     guardar() {
-      if (this.validar()) {
-        return;
-      }
+     /*  if (this.validar()) {
+        return ;
+      } */
 
       if (this.editedIndex > -1) {
         //Código para editar
@@ -499,13 +390,23 @@ export default {
         let me = this;
         //let header = {"Authorization" : "Bearer "+this.$store.state.token };
         //let configuracion ={headers : header};
+        var seccionesArray = [];
+
+        me.seccionesSelect.forEach(element => {
+          seccionesArray.push(element.idseccion);
+        });
+
+        console.log(seccionesArray);
+
         axios
-          .post("api/Carreras", {
-            nombre: me.nombre,
+          .post("api/matriculas", {
+            anioacademico: '2020-01',
+            idalumno: 1,
+            secciones: seccionesArray
           })
           .then(function(response) {
             me.openSnack(
-              "Registro " + me.nombre + " creado con éxito",
+              "Matricula creada con éxito",
               "green"
             );
             me.close();

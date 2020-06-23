@@ -6,7 +6,7 @@ import vuetify from "./plugins/vuetify";
 import axios from "axios";
 
 Vue.config.productionTip = false;
-axios.defaults.baseURL = "https://localhost:5001/";
+axios.defaults.baseURL = "https://localhost:44353/";
 
 new Vue({
   router,
