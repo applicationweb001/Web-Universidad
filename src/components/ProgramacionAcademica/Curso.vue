@@ -29,21 +29,35 @@
               <v-card>
                 <v-card-title>
                   <span class="headline">{{ formTitle }}</span>
+                  <v-spacer> </v-spacer>
+                  <v-progress-linear
+                    :active="loading"
+                    :indeterminate="loading"
+                    color="primary"
+                  ></v-progress-linear>
                 </v-card-title>
                 <v-card-text>
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field
-                          v-model="nombre"
+                          v-model="objcurso.nombre"
                           label="Nombre"
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field
+                          v-model="objcurso.codigo_curso"
+                          label="Código"
                         ></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <v-autocomplete
-                          v-model="selectsCarreras"
+                          v-model="objcurso.selectsCarreras"
                           :items="carreras"
                           filled
                           chips
@@ -137,6 +151,7 @@
                 <v-card-text>
                   Estás a punto de eliminar el ítem: {{ dropName }}
                 </v-card-text>
+
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="green darken-1" @click="closeDropModal()"
@@ -206,15 +221,20 @@ export default {
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
       { text: "Curso", value: "nombre", sortable: true },
-      { text: "Carreras", value: "carreras", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
+      { text: "Código", value: "codigo_curso", sortable: false }, //el name es lo que tiene que ir igual al archivo JSON
+      { text: "Carreras Asignadas", value: "carreras", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
     ],
     search: "",
     editedIndex: -1,
 
     //objeto
-    id: "",
-    nombre: "",
-    selectsCarreras: [],
+    objcurso: {
+      id: "",
+      nombre: "",
+      codigo_curso: "",
+      selectsCarreras: [],
+    },
+
     //
 
     valida: 0,
@@ -235,6 +255,8 @@ export default {
     textSnack: "",
     colorSnack: "",
     //
+
+    loading: false,
   }),
 
   computed: {
@@ -247,6 +269,11 @@ export default {
     dialog(val) {
       val || this.close();
     },
+    loading(val) {
+      if (!val) return;
+
+      setTimeout(() => (this.loading = false), 3000);
+    },
   },
 
   created() {
@@ -256,8 +283,8 @@ export default {
 
   methods: {
     remove(item) {
-      let index = this.selectsCarreras.indexOf(item.idcarrera);
-      if (index >= 0) this.selectsCarreras.splice(index, 1);
+      let index = this.objcurso.selectsCarreras.indexOf(item.idcarrera);
+      if (index >= 0) this.objcurso.selectsCarreras.splice(index, 1);
     },
 
     statusCerrar() {
@@ -361,7 +388,7 @@ export default {
         .then(function(response) {
           carrerasArray = response.data;
           carrerasArray.map(function(x) {
-            me.selectsCarreras.push(x.idcarrera);
+            me.objcurso.selectsCarreras.push(x.idcarrera);
           });
           _dialog();
         })
@@ -371,13 +398,14 @@ export default {
     },
 
     editItem(item) {
-      this.id = item.idcurso;
-      this.selectsCarreras = [];
-      this.nombre = item.nombre;
+      this.objcurso.id = item.idcurso;
+      this.objcurso.selectsCarreras = [];
+      this.objcurso.nombre = item.nombre;
+      this.objcurso.codigo_curso = item.codigo_curso;
       this.editedIndex = 1;
       this.selectCarreras(() => {
         this.dialog = true;
-      }, this.id);
+      }, this.objcurso.id);
     },
 
     dropItem(item) {
@@ -396,6 +424,7 @@ export default {
             "red"
           );
           me.closeDropModal();
+          me.clean();
           me.listar();
         })
         .catch(function(error) {
@@ -410,11 +439,12 @@ export default {
 
     //limpiar principalmente los atributos del objeto
     clean() {
-      this.id = "";
-      this.nombre = "";
-      this.selectsCarreras = [];
-      this.editedIndex = -1;
+      this.objcurso.id = "";
+      this.objcurso.nombre = "";
+      this.objcurso.selectsCarreras = [];
+      (this.objcurso.codigo_curso = ""), (this.editedIndex = -1);
       this.validaMensaje = [];
+      this.loading = false;
     },
 
     guardar() {
@@ -425,16 +455,17 @@ export default {
       if (this.editedIndex > -1) {
         //Código para editar
         let me = this;
-
+        me.loading = true; // activando loading
         axios
           .put("api/Cursos", {
-            idcurso: me.id,
-            nombre: me.nombre,
-            carreras: me.selectsCarreras,
+            idcurso: me.objcurso.id,
+            nombre: me.objcurso.nombre,
+            codigo_curso: me.objcurso.codigo_curso,
+            carreras: me.objcurso.selectsCarreras,
           })
           .then(function(response) {
             me.openSnack(
-              "Registro " + me.nombre + " actualizado con éxito",
+              "Registro " + me.objcurso.nombre + " actualizado con éxito",
               "blue"
             );
             me.close();
@@ -449,12 +480,13 @@ export default {
 
         axios
           .post("api/Cursos", {
-            nombre: me.nombre,
-            carreras: me.selectsCarreras,
+            nombre: me.objcurso.nombre,
+            codigo_curso: me.objcurso.codigo_curso,
+            carreras: me.objcurso.selectsCarreras,
           })
           .then(function(response) {
             me.openSnack(
-              "Registro " + me.nombre + " creado con éxito",
+              "Registro " + me.objcurso.nombre + " creado con éxito",
               "green"
             );
             me.close();
@@ -470,13 +502,16 @@ export default {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.nombre.length < 10 || this.nombre.length > 100) {
+      if (
+        this.objcurso.nombre.length < 10 ||
+        this.objcurso.nombre.length > 100
+      ) {
         this.validaMensaje.push(
           "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
         );
       }
 
-      if (this.selectsCarreras.length === 0) {
+      if (this.objcurso.selectsCarreras.length === 0) {
         this.validaMensaje.push("-Debe seleccionar uno o más cursos");
       }
 

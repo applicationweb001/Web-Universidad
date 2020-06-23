@@ -34,7 +34,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="10" md="10">
-                          <v-autocomplete
+                        <v-autocomplete
                           v-model="objseccion.curso.idcurso"
                           :items="cursos"
                           label="Curso"
@@ -43,11 +43,11 @@
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="10" md="10">
-                        <v-autocomplete                 
+                        <v-autocomplete
                           v-model="objseccion.docente.iddocente"
                           :items="docentes"
-                          label="Docente"                        
-                       ></v-autocomplete>
+                          label="Docente"
+                        ></v-autocomplete>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -56,11 +56,10 @@
                           readonly
                           filled
                           v-model="objseccion.cantidad"
-                          label="Límite de alumnos"                        
+                          label="Límite de alumnos"
                         ></v-text-field>
-                      </v-col>                      
+                      </v-col>
                     </v-row>
-                                       
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <div
@@ -182,6 +181,7 @@
           </td>
         </template>
  -->
+
         <template v-slot:no-data>
           <v-btn color="primary" @click="listar">Resetear</v-btn>
         </template>
@@ -200,29 +200,29 @@ export default {
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
-      { text: "Curso", value: "idcurso", sortable: true },      
+      { text: "Curso", value: "idcurso", sortable: true },
       { text: "Nombre curso", value: "nombrecurso", sortable: true },
-      { text: "Docente", value: "iddocente", sortable: true },      
+      { text: "Docente", value: "iddocente", sortable: true },
       { text: "Nombre docente", value: "nombredocente", sortable: true },
-      { text: "Código sección", value: "codigo_seccion", sortable: true},
-      { text: "Ciclo académico", value: "ciclo_academico", sortable: true},
-       ],
+      { text: "Código sección", value: "codigo_seccion", sortable: true },
+      { text: "Ciclo académico", value: "ciclo_academico", sortable: true },
+    ],
     search: "",
     editedIndex: -1,
 
     //objeto
-    objseccion:{
-      id :"",
-      curso :{
-          idcurso:"",
-          nombre :"",
-          codigo :""
+    objseccion: {
+      id: "",
+      curso: {
+        idcurso: "",
+        nombre: "",
+        codigo: "",
       },
-      docente :{
-        iddocente:"",
-        nombre :""
+      docente: {
+        iddocente: "",
+        nombre: "",
       },
-      cantidad :10
+      cantidad: 10,
     },
     //
 
@@ -265,11 +265,6 @@ export default {
   },
 
   methods: {
-    remove(item) {
-      let index = this.selectsSecciones.indexOf(item.idseccion);
-      if (index >= 0) this.selectsSecciones.splice(index, 1);
-    },
-
     statusCerrar() {
       this.adModal = 0;
     },
@@ -297,40 +292,6 @@ export default {
         this.adModal = 0;
       }
     },
-    activar() {
-      let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let configuracion = { headers: header };
-      axios
-        .put("api/Categorias/Activar/" + this.adId, {}, configuracion)
-        .then(function(response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
-    desactivar() {
-      let me = this;
-      let header = { Authorization: "Bearer " + this.$store.state.token };
-      let configuracion = { headers: header };
-      axios
-        .put("api/Categorias/Desactivar/" + this.adId, {}, configuracion)
-        .then(function(response) {
-          me.adModal = 0;
-          me.adAccion = 0;
-          me.adNombre = "";
-          me.adId = "";
-          me.listar();
-        })
-        .catch(function(error) {
-          console.log(error);
-        });
-    },
 
     listar() {
       let me = this;
@@ -346,14 +307,14 @@ export default {
 
     listardocentes() {
       let me = this;
-        let docentesArray = [];
+      let docentesArray = [];
       axios
         .get("api/docentes")
         .then(function(response) {
           docentesArray = response.data;
           docentesArray.map(function(x) {
             me.docentes.push({ text: x.nombre, value: x.iddocente });
-          })
+          });
         })
         .catch(function(error) {
           console.log(error);
@@ -375,8 +336,6 @@ export default {
           console.log(error);
         });
     },
-
-  
 
     selectCarreras(_dialog, id) {
       let me = this;
@@ -458,7 +417,7 @@ export default {
             idcurso: me.objseccion.curso.idcurso,
             iddocente: me.objseccion.docente.iddocente,
             cantidad: me.objseccion.cantidad,
-            codigo_curso: me.objseccion.curso.codigo_curso
+            codigo_curso: me.objseccion.curso.codigo_curso,
           })
           .then(function(response) {
             me.openSnack(
@@ -495,15 +454,15 @@ export default {
           });
       }
     },
-    
+
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
 
       //if (this.nombre.length < 10 || this.nombre.length > 100) {
-       // this.validaMensaje.push(
-       //   "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
-        //);
+      // this.validaMensaje.push(
+      //   "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
+      //);
       //}
 
       if (this.objseccion.curso.idcurso <= 0) {

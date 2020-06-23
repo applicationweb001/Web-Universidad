@@ -32,7 +32,6 @@ const routes = [
     component: Curso1,
   },
   {
-
     path: "/alumno", //este es la ruta del navegador
     name: "alumno", //este nombre es el que se usa en el html
     component: Alumno,
@@ -41,7 +40,6 @@ const routes = [
     path: "/seccion", //este es la ruta del navegador
     name: "seccion", //este nombre es el que se usa en el html
     component: Seccion,
-
   },
   {
     path: "/login",
