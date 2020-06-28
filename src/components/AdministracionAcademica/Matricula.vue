@@ -22,8 +22,7 @@
 
          <v-col cols="12" sm="4"> 
             <v-text-field
-            value="Carrera: "
-            label=""
+            v-model="carreraAlumno"
             solo
             readonly
           ></v-text-field>
@@ -44,7 +43,7 @@
                 <v-dialog v-model="dialog" max-width="500px">
                   <v-card>
                     <v-card-title>
-                      <span class="headline">{{ formTitle }}</span>
+                      <span class="headline"></span>
                     </v-card-title>
                     <v-card-text>
                       <v-container>
@@ -188,7 +187,10 @@ export default {
     textSnack: "",
     colorSnack: "",
     //
+    carreraAlumno :""
   }),
+
+ 
   
   watch: {
     dialog(val) {
@@ -198,6 +200,7 @@ export default {
 
   created() {
     this.listar();
+    this.carreraAlumno = "Carrera de " + this.$store.state.usuario.nombreCarrera;
   },
 
   methods: {
@@ -267,7 +270,7 @@ export default {
       //let header = {"Authorization" : "Bearer "+this.$store.state.token };
       //let configuracion ={headers : header};
       axios
-        .get("api/cursos")
+        .get("api/cursos/"+this.$store.state.usuario.idcarrera)
         .then((response) => {
           me.cursos = response.data;
         })

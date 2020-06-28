@@ -157,7 +157,11 @@
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>System Uni</v-toolbar-title>
-        <v-spacer />
+        <v-spacer/>
+        <span v-if="logueado" >
+          Bienvenido {{rol}}
+        </span>
+        
         <v-btn v-if="logueado" icon @click="salir">
           <v-icon>logout</v-icon>
         </v-btn>
@@ -183,11 +187,15 @@ export default {
   data() {
     return {
       drawer: null,
-    };
+      
+  };
   },
   computed: {
     logueado() {
       return this.$store.state.usuario;
+    },
+    rol() {
+      return this.$store.state.usuario.rol;
     },
   },
   created() {
