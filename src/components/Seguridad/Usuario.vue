@@ -22,6 +22,63 @@
               hide-details
             ></v-text-field>
             <v-spacer></v-spacer>
+            <v-dialog v-model="modalAlumno" max-width="800px">
+              <v-card>
+                <v-card-title>
+                  <span class="headline"></span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <template>
+                      <v-data-table
+                        :headers="headersAlumno"
+                        :items="alumnosLibres"
+                        :search="search1"
+                        class="elevation-1"
+                      >
+                        <template v-slot:top>
+                          <v-toolbar flat color="white">
+                            <v-toolbar-title
+                              >Alumnos sin Usuarios</v-toolbar-title
+                            >
+                            <v-divider class="mx-4" inset vertical></v-divider>
+                            <v-spacer></v-spacer>
+                            <v-text-field
+                              class="text-xs-center"
+                              v-model="search1"
+                              append-icon="search"
+                              label="Búsqueda"
+                              single-line
+                              hide-details
+                            ></v-text-field>
+                            <v-spacer></v-spacer>
+                          </v-toolbar>
+                        </template>
+                        <template template v-slot:item.seleccionar="{ item }">
+                          <td class="justify-center layout px-0">
+                            <v-icon
+                              small
+                              class="mr-2"
+                              @click="agregarAlumno(item)"
+                            >
+                              add
+                            </v-icon>
+                          </td>
+                        </template>
+                      </v-data-table>
+                    </template>
+                  </v-container>
+                </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="close"
+                    >Cancel</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark class="mb-2" v-on="on">Nuevo</v-btn>
@@ -36,8 +93,7 @@
                       <v-col cols="12" sm="12" md="12">
                         <v-text-field
                           v-model="usuario.correo"
-                          label="Correo de Usuario"
-                          :rules="[rules.required, rules.email]"
+                          label="Nombre de Usuario"
                         ></v-text-field>
                       </v-col>
                     </v-row>
@@ -45,7 +101,7 @@
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field
                           type="password"
-                          v-model="usuario.password"
+                          v-model="usuario.contrasenia"
                           label="Contraseña"
                         ></v-text-field>
                       </v-col>
@@ -57,6 +113,31 @@
                         ></v-autocomplete>
                       </v-col>
                     </v-row>
+                    <v-row v-if="editedIndex">
+                      <v-col cols="12" sm="6" md="6">
+                        <v-checkbox
+                          v-model="editedIndex"
+                          label="¿Actualizar Contraseña?"
+                        ></v-checkbox>
+                      </v-col>
+                    </v-row>
+
+                    <v-row v-if="usuario.idrol == 1">
+                      <v-col cols="12" sm="10" md="10">
+                        <v-text-field
+                          v-model="nombreAlumno"
+                          label="Nombre del alumno"
+                          filled
+                          readonly
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="2" md="2">
+                        <v-btn icon dark color="primary" @click="openAlumno()">
+                          <v-icon>search</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+
                     <v-row>
                       <v-col cols="12" sm="12" md="12">
                         <div
@@ -146,7 +227,7 @@
             :bottom="true"
             :color="colorSnack"
             :right="true"
-            :timeout="5000"
+            :timeout="7000"
           >
             {{ textSnack }}
 
@@ -200,22 +281,36 @@
 import axios from "axios";
 export default {
   data: () => ({
+    alumnosLibres: [],
+
     usuarios: [],
     roles: [],
     dialog: false,
     headers: [
       { text: "Opciones", value: "opcion", sortable: false },
       { text: "Nombre Usuario", value: "email", sortable: true },
-      { text: "Rol", value: "rol", sortable: false }
+      { text: "Rol", value: "rol", sortable: false },
+    ],
+    headersAlumno: [
+      { text: "Seleccionar", value: "seleccionar", sortable: false },
+      { text: "Alumno", value: "nombre", sortable: true },
+      { text: "Apellido", value: "apellido", sortable: true },
+      { text: "Carreras", value: "nombreCarrera", sortable: true }, //el name es lo que tiene que ir igual al archivo JSON
+      { text: "DNI", value: "dni", sortable: true },
+      { text: "Fecha de Nacimiento", value: "fechanacimiento", sortable: true },
     ],
     search: "",
-    editedIndex: -1,
+    search1: "",
+    nombreAlumno:"",
+    
+    editedIndex: 0,
 
     usuario: {
       id: "",
-      idrol: "",
+      idrol: 0,
       correo: "",
-      contraseña: ""
+      contrasenia: "",
+      idalumno: 0,
     },
     actPassword: false,
 
@@ -236,7 +331,9 @@ export default {
     textSnack: "",
     colorSnack: "",
     //
+    modalAlumno: false,
 
+    /*
     rules: {
       required: value => {
         return !!value||'Required.';
@@ -249,24 +346,25 @@ export default {
             return pattern.test(value) || 'Invalid e-mail.'
       }
 
-    }
+    } */
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nueva Usuario" : "Actualizando Usuario";
-    }
+      return this.editedIndex === 0 ? "Nuevo Usuario" : "Actualizando Usuario";
+    },
   },
 
   watch: {
     dialog(val) {
       val || this.close();
-    }
+    },
   },
 
   created() {
     this.listar();
     this.selectRoles();
+    this.listarAlumnos();
   },
 
   methods: {
@@ -274,11 +372,31 @@ export default {
       this.dialog = false;
       this.clean();
     },
+    openAlumno() {
+      this.modalAlumno = true;
+    },
+    agregarAlumno(item) {
+      this.modalAlumno = false;
+      this.usuario.idalumno = item.idAlumno;
+      this.nombreAlumno = item.nombre +" " +item.apellido;
+    },
+
+    cleanJson(jsonx) {
+      for (var clave in jsonx) {
+        if (typeof jsonx[clave] == "string") {
+          jsonx[clave] = "";
+        }
+        if (typeof jsonx[clave] == "number") {
+          console.log(typeof jsonx[clave]);
+          jsonx[clave] = 0;
+        }
+      }
+    },
 
     clean() {
-      this.id = "";
-      this.nombre = "";
-      this.editedIndex = -1;
+      this.cleanJson(this.usuario);
+      this.nombreAlumno ="";
+      this.editedIndex = 0;
       this.colorsnack = "";
       this.validaMensaje = [];
     },
@@ -295,6 +413,7 @@ export default {
 
     closeAdModal() {
       this.adModal = false;
+      this.clean();
     },
 
     statusItem(accion, item) {
@@ -317,8 +436,22 @@ export default {
       //let configuracion ={headers : header};
       axios
         .get("api/Usuarios")
-        .then(response => {
+        .then((response) => {
           me.usuarios = response.data;
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+    },
+
+    listarAlumnos() {
+      let me = this;
+      //let header = {"Authorization" : "Bearer "+this.$store.state.token };
+      //let configuracion ={headers : header};
+      axios
+        .get("api/Alumnos/libres")
+        .then((response) => {
+          me.alumnosLibres = response.data;
         })
         .catch(function(error) {
           console.log(error);
@@ -346,8 +479,9 @@ export default {
     },
 
     editItem(item) {
-      this.id = item.idcarrera;
-      this.nombre = item.nombre;
+      this.usuario.id = item.idusuario;
+      this.usuario.idrol = item.idrol;
+      this.usuario.correo = item.email;
       this.editedIndex = 1;
       this.dialog = true;
     },
@@ -372,7 +506,7 @@ export default {
           me.listar();
         })
         .catch(function(error) {
-          console.log(error);
+          console.log(error.response.data);
         });
     },
 
@@ -381,15 +515,15 @@ export default {
         return;
       }
 
-      if (this.editedIndex > -1) {
+      if (this.editedIndex > 0) {
         //Código para editar
         let me = this;
         //let header = {"Authorization" : "Bearer "+this.$store.state.token };
         //let configuracion ={headers : header};
         axios
-          .put("api/Carreras", {
+          .put("api/Alumnos", {
             idcarrera: me.id,
-            nombre: me.nombre
+            nombre: me.nombre,
           })
           .then(function(response) {
             me.openSnack(
@@ -400,7 +534,7 @@ export default {
             me.listar();
           })
           .catch(function(error) {
-            console.log(error);
+            console.log(error.response.data);
           });
       } else {
         //Código para guardar
@@ -409,34 +543,81 @@ export default {
         //let configuracion ={headers : header};
         axios
           .post("api/Usuarios", {
-            email: me.usuario.email,
-            password: me.usuario.password
+            idrol: me.usuario.idrol,
+            email: me.usuario.correo,
+            password: me.usuario.contrasenia,
+            idalumno: me.usuario.idalumno,
           })
           .then(function(response) {
-            me.openSnack("Nuevo registro creado con éxito", "green");
+            me.openSnack(
+              response.data,
+              "green"
+            );
             me.close();
             me.listar();
           })
           .catch(function(error) {
-            console.log(error);
+            console.log(error.response.data);
+
+            var errorback = error.response.data;
+            if (errorback == "El nombre de usuario ya existe") {
+              me.openSnack(
+                "Mensaje de Sistema: El nombre de usuario ya existe, por favor ingrese otro",
+                "red"
+              );
+            }
           });
       }
+    },
+
+    validar_clave(contrasenna) {
+      if (contrasenna.length >= 9) {
+        var mayuscula = false;
+        var numero = false;
+
+        for (var i = 0; i < contrasenna.length; i++) {
+          if (
+            contrasenna.charCodeAt(i) >= 65 &&
+            contrasenna.charCodeAt(i) <= 90
+          ) {
+            mayuscula = true;
+          } else if (
+            contrasenna.charCodeAt(i) >= 48 &&
+            contrasenna.charCodeAt(i) <= 57
+          ) {
+            numero = true;
+          }
+        }
+        return mayuscula && numero;
+      }
+      return false;
     },
 
     validar() {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.nombre.length < 10 || this.nombre.length > 100) {
+      if (this.usuario.correo.length > 9 || this.usuario.correo.length === 0) {
         this.validaMensaje.push(
-          "El nombre debe tener más de 10 caracteres y menos de 100 caracteres"
+          "El nombre de usuario debe estar vacio y debe tener menos de 10 caracteres"
         );
       }
+
+      if (this.usuario.idrol == "" || this.usuario.idrol == 0) {
+        this.validaMensaje.push("Debe selecciona un rol");
+      }
+
+      if (!this.validar_clave(this.usuario.contrasenia)) {
+        this.validaMensaje.push(
+          "La contraseña debe tener como mínimo 9 caractéres, donde debe contener al menos una mayúscula y número"
+        );
+      }
+
       if (this.validaMensaje.length) {
         this.valida = 1;
       }
       return this.valida;
-    }
-  }
+    },
+  },
 };
 </script>

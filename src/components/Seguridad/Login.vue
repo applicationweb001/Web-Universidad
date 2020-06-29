@@ -80,7 +80,7 @@ export default {
             this.error = "Ocurrió un error de conexión con el servidor";
           } else {
             if (err.response.status == 400) {
-              this.error = "No es un email válido";
+              this.error = "No es un usuario válido";
             } else if (err.response.status == 404) {
               this.error = "No existe el usuario o sus datos son incorrectos";
             } else {
