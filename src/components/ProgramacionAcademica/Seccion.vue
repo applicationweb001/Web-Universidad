@@ -203,7 +203,8 @@ export default {
       { text: "Curso", value: "idcurso", sortable: true },
       { text: "Nombre curso", value: "nombrecurso", sortable: true },
       { text: "Docente", value: "iddocente", sortable: true },
-      { text: "Nombre docente", value: "nombredocente", sortable: true },
+      { text: "Nombre docente", value: "nombredocente", sortable: true },      
+      { text: "Alumnos matriculados", value: "alumnos_registrados", sortable: true },
       { text: "Código sección", value: "codigo_seccion", sortable: true },
       { text: "Ciclo académico", value: "ciclo_academico", sortable: true },
     ],
@@ -356,13 +357,12 @@ export default {
     },
 
     editItem(item) {
-      this.id = item.idseccion;
+      this.objseccion.id = item.idseccion;
+      this.objseccion.curso.idcurso = item.idcurso;
+      this.objseccion.docente.iddocente = item.iddocente; 
       this.selectsSecciones = [];
-      this.nombre = item.nombre;
       this.editedIndex = 1;
-      this.selectCarreras(() => {
-        this.dialog = true;
-      }, this.id);
+      this.dialog = true;
     },
 
     dropItem(item) {
@@ -416,8 +416,7 @@ export default {
             idseccion: me.objseccion.id,
             idcurso: me.objseccion.curso.idcurso,
             iddocente: me.objseccion.docente.iddocente,
-            cantidad: me.objseccion.cantidad,
-            codigo_curso: me.objseccion.curso.codigo_curso,
+            cantidad: me.objseccion.cantidad
           })
           .then(function(response) {
             me.openSnack(
@@ -428,7 +427,7 @@ export default {
             me.listar();
           })
           .catch(function(error) {
-            console.log(error);
+            console.log(error.response.data);
           });
       } else {
         //Código para guardar
