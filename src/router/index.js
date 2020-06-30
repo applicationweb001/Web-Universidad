@@ -10,11 +10,17 @@ import Seccion from "../components/ProgramacionAcademica/Seccion.vue";
 import Docente from "../components/AdministracionAcademica/Docente.vue";
 import Rol from "../components/Seguridad/Rol.vue";
 import Usuario from "../components/Seguridad/Usuario.vue";
-
+import ConsultaMatricula from "../components/AdministracionAcademica/ConsultaMatriculas.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
+  {
+    path: "/matriculas", //este es la ruta del navegador
+    name: "matriculas", //este nombre es el que se usa en el html
+    component: ConsultaMatricula,
+  },
+  
   {
     path: "/carrera", //este es la ruta del navegador
     name: "carrera", //este nombre es el que se usa en el html

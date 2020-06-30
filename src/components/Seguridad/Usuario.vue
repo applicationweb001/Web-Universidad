@@ -238,9 +238,6 @@
         </template>
 
         <template v-slot:item.opcion="{ item }">
-          <v-icon small color="blue" class="mr-2" @click="editItem(item)">
-            edit
-          </v-icon>
 
           <v-icon small color="red" class="mr-2" @click="dropItem(item)">
             delete

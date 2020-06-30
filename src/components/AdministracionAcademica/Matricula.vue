@@ -69,7 +69,6 @@
                       <v-container>
                         <template>
                           <v-data-table
-                            v-model="seccionesSelect"
                             :headers="headersSeccionesCursos"
                             :items="secciones"
                             class="elevation-1"
@@ -172,7 +171,7 @@ export default {
     cursos: [],
 
     seccionesSelect: [],
-    idmatricula :0,
+    idmatricula: 0,
 
     singleSelect: true,
 
@@ -188,6 +187,7 @@ export default {
       { text: "Curso", value: "nombreCurso", sortable: true },
       { text: "Seccion", value: "codigo_seccion", sortable: true },
       { text: "Profesor", value: "nombreDocente", sortable: true },
+      { text: "Cupos Disponibles", value: "cuposDisponibles", sortable: true },
     ],
     headersSeccionesSelect: [
       { text: "Borrar", value: "borrar", sortable: false },
@@ -255,7 +255,7 @@ export default {
         .then((response) => {
           me.estadoMatricula = response.data.estado;
           me.idmatricula = response.data.idmatricula;
-          
+
           if (me.estadoMatricula == "Estado: Matriculado") {
             me.stateenrollment = 1;
           } else {
@@ -283,7 +283,10 @@ export default {
 
     agregarSeccion(data = []) {
       if (this.encuentraCurso(data["idcurso"])) {
-        //error
+        this.openSnack(
+          "No puede inscribirse en dos secciones del mismo curso",
+          "yellow accent-4"
+        );
       } else {
         this.seccionesSelect.push({
           idseccion: data["idseccion"],
@@ -348,6 +351,10 @@ export default {
         .get("api/secciones/cursos/" + item.idcurso)
         .then((response) => {
           me.secciones = response.data;
+
+          me.secciones.forEach((obj) => {
+            obj.cuposDisponibles = obj.totalCupos - obj.alumnosDisponibles;
+          });
         })
         .catch(function(error) {
           console.log(error);
@@ -403,10 +410,10 @@ export default {
 
         axios
           .put("api/matriculas", {
-            idmatricula : me.idmatricula,
+            idmatricula: me.idmatricula,
             anioacademico: "2020-01",
             idalumno: this.$store.state.usuario.idalumno,
-            Secciones: seccionesArray
+            Secciones: seccionesArray,
           })
           .then(function(response) {
             me.loader = false;
@@ -435,7 +442,7 @@ export default {
             secciones: seccionesArray,
           })
           .then(function(response) {
-              me.loader = false;
+            me.loader = false;
             me.openSnack("Matricula creada con éxito", "green");
             me.close();
             me.listar();

@@ -129,7 +129,7 @@
                 <v-list-item-title>Consultas</v-list-item-title>
               </v-list-item-content>
             </template>
-            <v-list-item router :to="{ name: 'login' }">
+            <v-list-item router :to="{ name: 'matriculas' }">
               <v-list-item-action>
                 <v-icon>assignment</v-icon>
               </v-list-item-action>
@@ -156,7 +156,7 @@
         :clipped-left="$vuetify.breakpoint.lgAndUp"
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
-        <v-toolbar-title>System Uni</v-toolbar-title>
+        <v-toolbar-title>Web Almater</v-toolbar-title>
         <v-spacer/>
         <span v-if="logueado" >
           Bienvenido {{rol}}
