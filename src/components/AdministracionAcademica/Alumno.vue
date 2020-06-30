@@ -29,6 +29,12 @@
               <v-card>
                 <v-card-title>
                   <span class="headline">{{ formTitle }}</span>
+                  <v-spacer> </v-spacer>
+                  <v-progress-linear
+                    :active="loading"
+                    :indeterminate="loading"
+                    color="primary"
+                  ></v-progress-linear>
                 </v-card-title>
                 <v-card-text>
                   <v-container>
@@ -325,7 +331,7 @@ export default {
     statusItem(accion, item) {
       this.adModal = 1;
       this.adNombre = item.nombre;
-      this.adId = item.idcategoria;
+      
 
       if (accion == 1) {
         this.adAccion = 1;
@@ -401,18 +407,28 @@ export default {
     },
 
     editItem(item) {
-      this.id = item.idalumno;
+      this.id = item.idAlumno;
       this.nombre = item.nombre;
+      this.apellido=item.apellido;
+      this.direccion=item.direccion;
+      this.dni=item.dni;
+      this.fechanacimiento=item.fechanacimiento;
+      this.idcarrera = item.idcarrera;
       this.editedIndex = 1;
-      this.selectAlumnos(() => {
-        this.dialog = true;
-      }, this.id);
+      this.dialog=true;
+      
+     
     },
 
     dropItem(item) {
-      this.dropId = item.idalumno;
+      this.dropId = item.idAlumno;
       this.dropName = item.nombre;
+      this.dropDireccion=item.direccion;
+      this.dropFechanacimiento=item.Date;
+      this.dropdni=item.dni;
       this.dropModal = true;
+
+
     },
     drop() {
       let me = this;
@@ -457,12 +473,13 @@ export default {
 
         axios
           .put("api/Alumnos", {
-            idalumno: me.id,
+            idAlumno: me.id,
             nombre: me.nombre,
-            carreras: me.selectsCarreras,
-            dni: me.dni,
-            fechanacimiento: me.fechanacimiento,
-            direccion: me.direccion
+            apellido : me.apellido,
+            idcarrera: me.idcarrera,
+            direccion : me.direccion,
+            fechanacimiento : me.date,
+            dni : parseInt(me.dni)  
           })
           .then(function(response) {
             me.openSnack(
@@ -511,6 +528,8 @@ export default {
           "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
         );
       }
+   
+      
 
       if (this.validaMensaje.length) {
         this.valida = 1;
