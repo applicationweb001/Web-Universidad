@@ -404,6 +404,7 @@ export default {
         let me = this;
 
         var seccionesArray = [];
+        
         me.seccionesSelect.forEach((element) => {
           seccionesArray.push(element.idseccion);
         });
@@ -413,10 +414,11 @@ export default {
             idmatricula: me.idmatricula,
             anioacademico: "2020-01",
             idalumno: this.$store.state.usuario.idalumno,
-            Secciones: seccionesArray,
+            secciones: seccionesArray,
           })
           .then(function(response) {
             me.loader = false;
+            me.stateMatricula();
             me.openSnack("Matricula actualizado con éxito", "indigo");
             me.close();
             me.listar();
@@ -443,6 +445,7 @@ export default {
           })
           .then(function(response) {
             me.loader = false;
+            me.stateMatricula();
             me.openSnack("Matricula creada con éxito", "green");
             me.close();
             me.listar();

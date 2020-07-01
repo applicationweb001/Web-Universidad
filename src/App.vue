@@ -8,7 +8,9 @@
         color="secondary"
         app
       >
+    
         <v-list flat dense shaped>
+             <template v-if="esSF">
           <v-list-group prepend-icon="import_contacts" no-action color="indigo">
             <template v-slot:activator>
               <v-list-item-content>
@@ -50,102 +52,125 @@
               </v-list-item-content>
             </v-list-item>
           </v-list-group>
+             </template>
 
-          <v-list-group prepend-icon="import_contacts" no-action color="indigo">
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title>Administración</v-list-item-title>
-                <v-list-item-title>Académica</v-list-item-title>
-              </v-list-item-content>
-            </template>
+          <template v-if="esAlu || esSA">
+            <v-list-group
+              prepend-icon="import_contacts"
+              no-action
+              color="indigo"
+            >
+              <template v-slot:activator>
+                <v-list-item-content>
+                  <v-list-item-title>Administración</v-list-item-title>
+                  <v-list-item-title>Académica</v-list-item-title>
+                </v-list-item-content>
+              </template>
 
-            <v-list-item router :to="{ name: 'alumno' }">
-              <v-list-item-action>
-                <v-icon>assignment</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Alumnos
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+              <template v-if="esSA">
+                <v-list-item router :to="{ name: 'alumno' }">
+                  <v-list-item-action>
+                    <v-icon>assignment</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      Alumnos
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
 
-            <v-list-item router :to="{ name: 'docente' }">
-              <v-list-item-action>
-                <v-icon>assignment</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Docentes
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+                <v-list-item router :to="{ name: 'docente' }">
+                  <v-list-item-action>
+                    <v-icon>assignment</v-icon>
+                  </v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>
+                      Docentes
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
 
-            <v-list-item router :to="{ name: 'matricula' }">
-              <v-list-item-action>
-                <v-icon>assignment</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Matrícula
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-group>
+               <template v-if="esAlu">
+              <v-list-item router :to="{ name: 'matricula' }">
+                <v-list-item-action>
+                  <v-icon>assignment</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Matrícula
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+               </template>
+            </v-list-group>
+          </template>
 
-          <v-list-group prepend-icon="import_contacts" no-action color="indigo">
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title>Seguridad</v-list-item-title>
-              </v-list-item-content>
-            </template>
+          <template v-if="esAd">
+            <v-list-group
+              prepend-icon="import_contacts"
+              no-action
+              color="indigo"
+            >
+              <template v-slot:activator>
+                <v-list-item-content>
+                  <v-list-item-title>Seguridad</v-list-item-title>
+                </v-list-item-content>
+              </template>
 
-            <v-list-item router :to="{ name: 'usuario' }">
-              <v-list-item-action>
-                <v-icon>assignment</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Usuarios
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+              <v-list-item router :to="{ name: 'usuario' }">
+                <v-list-item-action>
+                  <v-icon>assignment</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Usuarios
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
 
-            <v-list-item router :to="{ name: 'rol' }">
-              <v-list-item-action>
-                <v-icon>book</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Roles
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-group>
+              <v-list-item router :to="{ name: 'rol' }">
+                <v-list-item-action>
+                  <v-icon>book</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Roles
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-group>
+          </template>
 
-          <v-list-group prepend-icon="import_contacts" no-action color="indigo">
-            <template v-slot:activator>
-              <v-list-item-content>
-                <v-list-item-title>Consultas</v-list-item-title>
-              </v-list-item-content>
-            </template>
-            <v-list-item router :to="{ name: 'matriculas' }">
-              <v-list-item-action>
-                <v-icon>assignment</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>
-                  Consulta de
-                </v-list-item-title>
-                <v-list-item-title>
-                  Matricula
-                </v-list-item-title>
-                <v-list-item-title>
-                  por Ciclo
-                </v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list-group>
+          <template v-if="esAA">
+            <v-list-group
+              prepend-icon="import_contacts"
+              no-action
+              color="indigo"
+            >
+              <template v-slot:activator>
+                <v-list-item-content>
+                  <v-list-item-title>Consultas</v-list-item-title>
+                </v-list-item-content>
+              </template>
+              <v-list-item router :to="{ name: 'matriculas' }">
+                <v-list-item-action>
+                  <v-icon>assignment</v-icon>
+                </v-list-item-action>
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Consulta de
+                  </v-list-item-title>
+                  <v-list-item-title>
+                    Matricula
+                  </v-list-item-title>
+                  <v-list-item-title>
+                    por Ciclo
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-group>
+          </template>
         </v-list>
       </v-navigation-drawer>
 
@@ -157,11 +182,9 @@
       >
         <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
         <v-toolbar-title>Web Almater</v-toolbar-title>
-        <v-spacer/>
-        <span v-if="logueado" >
-          Bienvenido {{rol}}
-        </span>
-        
+        <v-spacer />
+        <span v-if="logueado"> Bienvenido {{ rol }} </span>
+
         <v-btn v-if="logueado" icon @click="salir">
           <v-icon>logout</v-icon>
         </v-btn>
@@ -187,8 +210,7 @@ export default {
   data() {
     return {
       drawer: null,
-      
-  };
+    };
   },
   computed: {
     logueado() {
@@ -196,6 +218,35 @@ export default {
     },
     rol() {
       return this.$store.state.usuario.rol;
+    },
+    esAd() {
+      return (
+        this.$store.state.usuario &&
+        this.$store.state.usuario.rol == "Administrador"
+      );
+    },
+    esAA() {
+      return (
+        this.$store.state.usuario &&
+        this.$store.state.usuario.rol == "Analista Academico"
+      );
+    },
+    esAlu() {
+      return (
+        this.$store.state.usuario && this.$store.state.usuario.rol == "Alumno"
+      );
+    },
+    esSA() {
+      return (
+        this.$store.state.usuario &&
+        this.$store.state.usuario.rol == "Secretaria Acádemica"
+      );
+    },
+    esSF() {
+      return (
+        this.$store.state.usuario &&
+        this.$store.state.usuario.rol == "Secretaria de Facultad"
+      );
     },
   },
   created() {

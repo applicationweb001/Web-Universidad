@@ -42,7 +42,7 @@
         </v-card-text>
         <v-card-actions class="px-3 pb-3">
           <v-flex text-xs-right>
-            <v-btn @click="ingresar" color="primary">Ingresar</v-btn>
+            <v-btn :loading="loader" @click="ingresar" color="primary">Ingresar</v-btn>
           </v-flex>
         </v-card-actions>
       </v-card>
@@ -58,17 +58,22 @@ export default {
       email: "",
       password: "",
       error: null,
+      loader:false
     };
   },
   methods: {
     ingresar() {
       this.error = null;
+      this.loader = true;
+      let me = this;
+      
       axios
         .post("api/Usuarios/Login", {
           email: this.email,
           password: this.password,
         })
         .then((respuesta) => {
+          me.loader=false;
           return respuesta.data;
         })
         .then((data) => {
@@ -76,6 +81,7 @@ export default {
           this.$router.push({ name: "inicio" });
         })
         .catch((err) => {
+          me.loader=false;
           if (err.response == undefined) {
             this.error = "Ocurrió un error de conexión con el servidor";
           } else {

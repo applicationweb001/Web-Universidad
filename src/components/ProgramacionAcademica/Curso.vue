@@ -515,6 +515,10 @@ export default {
         this.validaMensaje.push("-Debe seleccionar uno o más cursos");
       }
 
+      if (this.objcurso.codigo_curso.length !=4) {
+        this.validaMensaje.push("-El codigo de ser solo de 4 digítos");
+      }
+
       if (this.validaMensaje.length) {
         this.valida = 1;
       }

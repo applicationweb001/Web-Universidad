@@ -204,10 +204,10 @@
             <v-dialog v-model="dropModal" max-width="400">
               <v-card>
                 <v-card-title class="headline"
-                  >¿Desea eliminar la Carrera?</v-card-title
+                  >¿Desea eliminar un Usuario?</v-card-title
                 >
                 <v-card-text>
-                  Estás a punto de eliminar el ítem: {{ dropName }}
+                  Estás a punto de eliminar un Usuario: {{ dropName }}
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -485,22 +485,23 @@ export default {
 
     dropItem(item) {
       this.dropModal = true;
-      this.dropId = item.idcarrera;
-      this.dropName = item.nombre;
+      this.dropId = item.idusuario;
+      this.dropName = item.correo;
     },
 
     drop() {
       let me = this;
 
       axios
-        .delete("api/Carreras/" + me.dropId)
+        .delete("api/Usuarios/" + me.dropId)
         .then(function(response) {
           me.openSnack(
-            "Registro " + me.dropName + " eliminado con éxito",
+            "El usuario " + me.dropName + " eliminado con éxito",
             "red"
           );
           me.closeDropModal();
           me.listar();
+          
         })
         .catch(function(error) {
           console.log(error.response.data);

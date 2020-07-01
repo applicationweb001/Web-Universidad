@@ -356,11 +356,30 @@ export default {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.nombre.length < 5 || this.nombre.length > 100) {
+      if (this.nombre.length < 3 || this.nombre.length > 30) {
         this.validaMensaje.push(
-          "El nombre debe tener por lo menos 5 caracteres y menos de 100 caracteres"
+          "El nombre debe tener por lo menos 3 caracteres y menos de 30 caracteres"
         );
       }
+
+      if (this.apellido.length < 3 || this.apellido.length > 30) {
+        this.validaMensaje.push(
+          "El apellido debe tener por lo menos 3 caracteres y menos de 30 caracteres"
+        );
+      }
+
+      if (this.dni.length != 8 && typeof this.dni != 'number' ) {
+        this.validaMensaje.push(
+          "El dni debe tener 8 números"
+        );
+      }
+
+      if (this.correo.length < 1 ) {
+        this.validaMensaje.push(
+          "De ingresar un correo valido"
+        );
+      }
+
 
       if (this.validaMensaje.length) {
         this.valida = 1;

@@ -420,7 +420,7 @@ export default {
           })
           .then(function(response) {
             me.openSnack(
-              "Registro " + response.codigo_seccion + " actualizado con éxito",
+              "Registro actualizado con éxito",
               "blue"
             );
             me.close();
@@ -441,7 +441,7 @@ export default {
           })
           .then(function(response) {
             me.openSnack(
-              "Registro " + response.codigo_seccion + " creado con éxito",
+              "Registro creado con éxito",
               "green"
             );
             me.close();

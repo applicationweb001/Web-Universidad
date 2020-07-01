@@ -263,7 +263,7 @@ export default {
     idcarrera: 0,
     nombre: "",
     apellido :"",
-    dni :"",
+    dni : 0,
     date:"",
     direccion :"",
 
@@ -523,12 +523,29 @@ export default {
       this.valida = 0;
       this.validaMensaje = [];
 
-      if (this.nombre.length < 10 || this.nombre.length > 100) {
+      if (this.nombre.length < 3 || this.nombre.length > 30) {
         this.validaMensaje.push(
-          "-El nombre debe tener más de 10 caracteres y menos de 50 caracteres"
+          "-El nombre debe tener más de 3 caracteres y menos de 30 caracteres"
+        );
+      }
+
+      if (this.apellido.length < 3 || this.apellido.length > 30) {
+        this.validaMensaje.push(
+          "-El apellido debe tener más de 3 caracteres y menos de 30 caracteres"
         );
       }
    
+      if (this.direccion.length == 0) {
+        this.validaMensaje.push(
+          "Debe ingresar una dirección"
+        );
+      }
+
+      if (this.dni.length != 8 && typeof this.dni != 'number' ) {
+        this.validaMensaje.push(
+          "El dni debe tener 8 números"
+        );
+      }
       
 
       if (this.validaMensaje.length) {
